@@ -1,0 +1,12 @@
+install fedora 14 i386 - make sure LAN device enabled on boot
+turn off selinux
+add terminal to panel
+set up trackpad
+set up power management
+yum -y update
+add gb3wx user
+add gb3wx user into wheel group
+set terminal white on black
+visudo allowing wheel to su nopasswd
+/etc/gdm/custom.conf add AutomaticLoginEnable=true
+AutomaticLogin=yourUserName under deamon
