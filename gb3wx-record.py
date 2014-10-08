@@ -1,11 +1,16 @@
 import sys
-from serial import Serial
 from fcntl import  ioctl
 from termios import (
     TIOCMIWAIT,
     TIOCM_DSR,
     TIOCM_CTS
 )
+import os
+import subprocess
+import time
+import string
+import datetime
+import serial
 
 global g_wait_signals
 g_wait_signals = (TIOCM_DSR | TIOCM_CTS)
@@ -54,10 +59,71 @@ def wait_for_qso_stop(ser):
     print "QSO stopped"
     return
 
+def open_result_file(filename, mode="r"):
+    try:
+        f = open(filename, mode)
+    except IOError, err:
+        yield None, err
+    else:
+        try:
+            yield f, None
+        finally:
+            f.close()
+
+def dstdir():
+    # TODO set machine timezone to UTC
+
+    DATA_DIR="/home/jag/data"
+    t = datetime.datetime.utcnow()
+    #t = utc_datetime_now()
+
+    dstdirname = "%s_%s" % ( t.year, t.month)
+
+    fname = dstdirname + "_" + "%02d_%02d_%02d_%02d" % (t.day, t.hour, t.minute, t.second)
+    print dstdirname
+    print fname
+
+def test_audio():
+    DATA_DIR="/home/jag/data"
+    DATA_FILE="ss.wav"
+
+    try:
+        f = open(os.path.join(DATA_DIR,DATA_FILE), "wb")
+    except IOError, err:
+        print "IOERROR",err
+        return
+
+    with f:
+        try:
+            p = subprocess.Popen(['arecord','-fcd'], stdout=f, stderr=subprocess.PIPE)
+        except OSError as e:
+            print e.errno
+            print e
+            return
+            
+        time.sleep( 1 )
+        p.terminate()
+#        p.kill()
+
+        status = p.communicate()
+        print "communicate status", status
+
+
+        retcode = p.wait()
+        print "retcode", retcode
+
+    return
+
 def main():
+#    dstdir()
+
+#    return test_audio()
+
     serport = '/dev/ttyUSB0'
 
-    ser = Serial(serport)
+    ser = serial.Serial(serport)
+
+     # TODO set volume using amixer on boot
 
     if not ser:
         print >> sys.stderr, "serial port %s not found" % serport
