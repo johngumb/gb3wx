@@ -10,3 +10,6 @@ set terminal white on black
 visudo allowing wheel to su nopasswd
 /etc/gdm/custom.conf add AutomaticLoginEnable=true
 AutomaticLogin=yourUserName under deamon
+sudo yum -y install pyserial
+sudo usermod -a -G dialout gb3wx
+
