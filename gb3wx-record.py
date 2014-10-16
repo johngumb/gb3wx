@@ -12,6 +12,18 @@ import string
 import datetime
 import serial
 
+#
+# (modified) USB serial pinout
+#
+# red   +5V
+# black GND
+# white DTR
+# green DSR
+# yellow RTS
+# blue   CTS
+#
+# originally TxD was green, RxD was white
+# 
 global g_wait_signals
 g_wait_signals = (TIOCM_DSR | TIOCM_CTS)
 
