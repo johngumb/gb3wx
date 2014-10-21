@@ -3,7 +3,8 @@ from fcntl import  ioctl
 from termios import (
     TIOCMIWAIT,
     TIOCM_DSR,
-    TIOCM_CTS
+    TIOCM_CTS,
+    TIOCM_CD
 )
 import os
 import subprocess
@@ -25,7 +26,7 @@ import serial
 # originally TxD was green, RxD was white
 # 
 global g_wait_signals
-g_wait_signals = (TIOCM_DSR | TIOCM_CTS)
+g_wait_signals = (TIOCM_DSR | TIOCM_CTS | TIOCM_CD)
 
 def wait_for_qso_start(ser):
     print "wait for qso start"
@@ -35,10 +36,12 @@ def wait_for_qso_start(ser):
     ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
     print "DSR",ser.getDSR()
     print "CTS",ser.getCTS()    
+    print "DCD",ser.getCD()
     print "QSO started"
 
     dsr = ser.getDSR()
     dtr = ser.getCTS()
+    dcd = ser.getCD()
 
     result = None
     
