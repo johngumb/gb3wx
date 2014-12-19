@@ -16,7 +16,7 @@ import serial
 #
 # (modified) USB serial pinout
 #
-# red   +5V
+# red   DCD
 # black GND
 # white DTR
 # green DSR
@@ -71,6 +71,7 @@ def wait_for_qso_stop(ser):
     ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
     print "DSR",ser.getDSR()
     print "CTS",ser.getCTS()    
+    print "DCD",ser.getCD()
     print "QSO stopped"
     return
 
