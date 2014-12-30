@@ -12,4 +12,8 @@ visudo allowing wheel to su nopasswd
 AutomaticLogin=yourUserName under deamon
 sudo yum -y install pyserial
 sudo usermod -a -G dialout gb3wx
+sudo yum install jack-audio-connection-kit.i686
+sudo yum install jack-audio-connection-kit-example-clients.i686
+sudo yum install jack_capture.i686
+sudo yum install alsa-plugins-jack.i686
 
