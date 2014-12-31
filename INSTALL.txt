@@ -17,3 +17,12 @@ sudo yum install jack-audio-connection-kit-example-clients.i686
 sudo yum install jack_capture.i686
 sudo yum install alsa-plugins-jack.i686
 
+add the following to /etc/modprobe.d/dist-alsa.conf:
+
+#
+# jag 31/12/2014
+# allow system audio card to come in first
+# and soundblaster show up as second
+#
+options snd slots=,snd_usb_audio
+
