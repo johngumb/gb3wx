@@ -131,7 +131,7 @@ def start_record( direction ):
         os.makedirs(os.path.dirname(fullpath))
 
     try:
-        f = open(os.path.join(DATA_DIR,dstdir,fname+data_file), "wb")
+        f = open(os.path.join(fullpath), "wb")
     except IOError, err:
         print "IOERROR",err
         return
