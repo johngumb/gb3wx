@@ -25,6 +25,16 @@ import serial
 #
 # originally TxD was green, RxD was white
 # 
+def ledtest(ser):
+    while True:
+        time.sleep(1)
+        ser.setDTR(True)
+        ser.setRTS(False)
+        time.sleep(1)
+        ser.setDTR(False)
+        ser.setRTS(True)
+
+
 global g_wait_signals
 g_wait_signals = (TIOCM_DSR | TIOCM_CTS | TIOCM_CD)
 
@@ -33,22 +43,33 @@ def wait_for_qso_start(ser):
 
     global g_wait_signals
 
-    ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
-    print "DSR",ser.getDSR()
-    print "CTS",ser.getCTS()    
-    print "DCD",ser.getCD()
-    print "QSO started"
+    both = True
 
-    dsr = ser.getDSR()
-    dtr = ser.getCTS()
-    dcd = ser.getCD()
+    while both:
+        both = False
+
+        ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
+        print "DSR",ser.getDSR()
+        print "CTS",ser.getCTS()    
+        print "DCD",ser.getCD()
+        print "QSO started"
+
+        dsr = ser.getDSR()
+        cts = ser.getCTS()
+        dcd = ser.getCD()
+        if dsr and cts:
+            #
+            # HACK
+            #
+            both=True
+
 
     result = None
     
     if dsr:
         result = "10_6"
 
-    if dtr:
+    if cts:
         result = "6_10"
 
     # need to return TIOCM_DSR or TIOCM_CTS here
@@ -86,47 +107,57 @@ def open_result_file(filename, mode="r"):
         finally:
             f.close()
 
-def dstdir():
+def dstdir_fname():
     # TODO set machine timezone to UTC
 
-    DATA_DIR="/home/jag/data"
+
     t = datetime.datetime.utcnow()
     #t = utc_datetime_now()
 
     dstdirname = "%s_%s" % ( t.year, t.month)
 
     fname = dstdirname + "_" + "%02d_%02d_%02d_%02d" % (t.day, t.hour, t.minute, t.second)
-    print dstdirname
-    print fname
+    return (dstdirname, fname)
 
-def test_audio():
-    DATA_DIR="/home/jag/data"
-    DATA_FILE="ss.wav"
+def start_record( direction ):
+    DATA_DIR="/home/gb3wx/data"
+    data_file="%s.wav" % direction
+
+    (dstdir, fname) = dstdir_fname()
+
+    fullpath = os.path.join(DATA_DIR,dstdir,fname+"_"+data_file)
+
+    if not os.path.exists(os.path.dirname(fullpath)):
+        os.makedirs(os.path.dirname(fullpath))
 
     try:
-        f = open(os.path.join(DATA_DIR,DATA_FILE), "wb")
+        f = open(os.path.join(DATA_DIR,dstdir,fname+data_file), "wb")
     except IOError, err:
         print "IOERROR",err
         return
 
     with f:
         try:
-            p = subprocess.Popen(['arecord','-fcd'], stdout=f, stderr=subprocess.PIPE)
+            p = subprocess.Popen(['arecord','-fcd','-Dhw:1'], stdout=f, stderr=subprocess.PIPE)
         except OSError as e:
             print e.errno
             print e
             return
             
-        time.sleep( 1 )
-        p.terminate()
-#        p.kill()
 
-        status = p.communicate()
-        print "communicate status", status
+    return p
+
+def stop_record(p):
+
+    p.terminate()
+    #p.kill()
+
+    status = p.communicate()
+    print "communicate status", status
 
 
-        retcode = p.wait()
-        print "retcode", retcode
+    retcode = p.wait()
+    print "retcode", retcode
 
     return
 
@@ -138,7 +169,7 @@ def main():
     serport = '/dev/ttyUSB0'
 
     ser = serial.Serial(serport)
-
+  
      # TODO set volume using amixer on boot
 
     if not ser:
@@ -150,13 +181,13 @@ def main():
 
         mode = wait_for_qso_start(ser)
 
-#        rec_handle = start_thread(start_record, mode)
+        rec_handle = start_record(mode)
 
         print "recording"
         wait_for_qso_stop(ser)
         print "stopping recording"
         
-#        stop_record(rec_handle)
+        stop_record(rec_handle)
 
 
 if __name__ == "__main__":
