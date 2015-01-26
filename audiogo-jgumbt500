@@ -1,6 +1,15 @@
 PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export LD_LIBRARY_PATH=/usr/local/lib
 
+if pgrep pulseaudio > /dev/null; then
+	pulseaudio -k
+	sleep 1
+fi
+
+if pgrep jackd > /dev/null; then
+	killall jackd
+	sleep 1
+fi
 #
 # HACK HACK
 #
