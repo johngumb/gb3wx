@@ -1,0 +1,28 @@
+#!/bin/bash -x
+
+send_dtmf()
+{
+local del=8
+echo $2
+./dtmfgen -drate_convert -k$1 -t100
+sleep ${del}
+}
+
+# password
+send_dtmf 2730 password
+
+send_dtmf *0060 "rx1->tx1_disa"
+send_dtmf *0071 "rx1->tx2_ena"
+send_dtmf *0261 "rx2->tx1_ena"
+send_dtmf *0270 "rx2->tx2_disa"
+
+#
+# K at end of over
+#
+send_dtmf *7119952 K1
+send_dtmf *7129952 K2
+
+#
+# leave privileged mode
+#
+send_dtmf \# quit

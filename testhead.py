@@ -66,11 +66,14 @@ def main():
 
     print "stabilising..."
 
-    time.sleep(1)
 
     while ser.getDSR() or ser.getCTS():
         time.sleep(1)
         print "stabilising..."
+
+    n = 10
+    print "sleep %d" % n
+    time.sleep(n)
 
     testrig = t_6_metre
     testrig2 = t_10_metre
@@ -80,7 +83,9 @@ def main():
     else:
         print "open 10 to 6"
 
-    testrig.spoof_signal_received()
+    testrig.spoof_signal_received(5)
+
+    time.sleep(2)
 
 #    t_10_metre = TestRadio("RTS","CTS")
 #    t_10_metre.spoof_signal_received()
@@ -92,13 +97,22 @@ def main():
     print "first over"
     testrig.spoof_signal_received(20)
 
-    time.sleep(1)
 
 #    while True:
 #        print ser.getDSR(), ser.getCTS()
 #        time.sleep(1)
 
     print "second over"
+    testrig2.spoof_signal_received(20)
+
+    time.sleep(2)
+
+    print "third over"
+    testrig.spoof_signal_received(20)
+
+    time.sleep(2)
+
+    print "fourth over"
     testrig2.spoof_signal_received(20)
 
     while True:

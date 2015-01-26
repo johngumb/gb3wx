@@ -1,0 +1,18 @@
+DEV=hw:0
+
+amixer -D${DEV} sset Mic 31 on
+
+DEV=hw:1
+
+# enable line input
+amixer -D${DEV} sset Line 128 cap on
+
+# disable mic input
+amixer -D${DEV} sset Mic 0 off
+
+# playback to controller for testing purposes
+amixer -D${DEV} sset Line 128
+
+amixer -D${DEV} sset 'Digital In' off
+
+
