@@ -14,6 +14,12 @@ import datetime
 import serial
 
 #
+# 1 second for debounce
+#
+global g_debounce_time
+g_debounce_time=0.2
+
+#
 # (modified) USB serial pinout
 #
 # red   DCD
@@ -38,31 +44,54 @@ def ledtest(ser):
 global g_wait_signals
 g_wait_signals = (TIOCM_DSR | TIOCM_CTS | TIOCM_CD)
 
+def get_qso_signals(ser):
+    dsr = ser.getDSR()
+    cts = ser.getCTS()
+
+    return (dsr, cts)
+
 def wait_for_qso_start(ser):
     print "wait for qso start"
 
     global g_wait_signals
+    global g_debounce_time
 
+    #
+    # wait for status change
+    #
     while True:
         ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
         print "DSR",ser.getDSR()
         print "CTS",ser.getCTS()    
         print "DCD",ser.getCD()
-        print "QSO started"
+        print "wait_for_qso_start: change detected"
 
-        dsr = ser.getDSR()
-        cts = ser.getCTS()
-        dcd = ser.getCD()
-        if dsr and cts:
-            #
-            # HACK - bogus response
-            # wait until we get just dsr or cts; dcd for debug
-            #
-            pass
-        else:
-            break
+        #
+        # debounce
+        #
+        signals = get_qso_signals(ser)
 
+        time.sleep(g_debounce_time)
 
+        newsignals = get_qso_signals(ser)
+
+        if newsignals == oldsignals:
+            dsr = ser.getDSR()
+            cts = ser.getCTS()
+            dcd = ser.getCD()
+            print "DSR",dsr
+            print "CTS",cts
+            print "DCD",dcd
+            if dsr and cts:
+                #
+                # HACK - bogus response
+                # wait until we get just dsr or cts; dcd for debug
+                #
+                print "dsr and cts set, bogus response, re-arm"
+            else:
+                break
+        
+        
     result = None
     
     if dsr:
