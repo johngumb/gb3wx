@@ -43,11 +43,7 @@ def wait_for_qso_start(ser):
 
     global g_wait_signals
 
-    both = True
-
-    while both:
-        both = False
-
+    while True:
         ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
         print "DSR",ser.getDSR()
         print "CTS",ser.getCTS()    
@@ -59,9 +55,12 @@ def wait_for_qso_start(ser):
         dcd = ser.getCD()
         if dsr and cts:
             #
-            # HACK
+            # HACK - bogus response
+            # wait until we get just dsr or cts; dcd for debug
             #
-            both=True
+            pass
+        else:
+            break
 
 
     result = None
