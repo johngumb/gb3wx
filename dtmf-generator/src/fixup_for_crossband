@@ -17,11 +17,25 @@ send_dtmf *0261 "rx2->tx1_ena"
 send_dtmf *0270 "rx2->tx2_disa"
 
 #
-# K at end of over
+# courtesy tones are enabled by default on both transmitters
+# see page 36 4.5 and page 37 4.6
 #
-send_dtmf *7119952 K1
-send_dtmf *7129952 K2
+#./dtmfgen -drate_convert -k*046 -t100
+#./dtmfgen -drate_convert -k*047 -t100
+#./dtmfgen -drate_convert -k*056 -t100
+#./dtmfgen -drate_convert -k*057 -t100
 
+#
+# courtesy tone programming
+# TODO
+# change once we figure out what's going on
+#
+send_dtmf *7109931 R1T1-CT-D
+send_dtmf *7119952 R1T2-CT-K
+send_dtmf *7129953 R2T1-CT-L
+send_dtmf *7139932 R2T2-CT-E
+
+# 
 #
 # leave privileged mode
 #
