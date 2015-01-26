@@ -1,6 +1,7 @@
 DEV=hw:0
 
-amixer -D${DEV} sset Mic 31 on
+amixer -D${DEV} sset Capture 9 on
+amixer -D${DEV} sset Mic 100 cap on
 
 DEV=hw:1
 
