@@ -90,7 +90,8 @@ def wait_for_qso_start(ser):
                 print "dsr and cts set, bogus response, re-arm"
             else:
                 break
-        
+        else:
+            print "debounce: %s did not match %s" % (newsignals,oldsignals)
         
     result = None
     
