@@ -8,6 +8,9 @@ echo $2
 sleep ${del}
 }
 
+
+setup_gb3wx()
+{
 # password
 send_dtmf 2730 password
 
@@ -35,8 +38,17 @@ send_dtmf *7119952 R1T2-CT-K
 send_dtmf *7129953 R2T1-CT-L
 send_dtmf *7139932 R2T2-CT-E
 
+#
+# save settings
+# 0 is the power up group
+#
+send_dtmf *10
+
 # 
 #
 # leave privileged mode
 #
 send_dtmf \# quit
+}
+
+#setup_gb3wx
