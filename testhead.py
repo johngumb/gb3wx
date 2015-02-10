@@ -32,7 +32,9 @@ class TestRadio:
         else:
             assert(False)
         
-        time.sleep(period)
+        for i in range(period):
+            print self.s_serial.getDSR(), self.s_serial.getCTS()
+            time.sleep(1)
 
         if self.m_signal_detect=="DTR":
             self.s_serial.setDTR(False)
