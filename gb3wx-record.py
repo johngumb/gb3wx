@@ -59,9 +59,9 @@ class LED:
     def set_state(self, state):
         self.m_state = state
         if state == "on":
-            self.m_funcmap[self.m_colour]=True
+            self.m_funcmap[self.m_colour](True)
         elif state == "off":
-            self.m_funcmap[self.m_colour]=False
+            self.m_funcmap[self.m_colour](False)
         else:
             assert(False and "bad led state")
 
@@ -234,7 +234,7 @@ def main():
     red_led = LED(ser, "red")
 
     green_led.set_state( "off" )
-    red_led.set_state( "off" )
+    red_led.set_state( "on" )
      # TODO set volume using amixer on boot
 
     if not ser:
