@@ -41,6 +41,36 @@ def ledtest(ser):
         ser.setRTS(True)
 
 
+class LED:
+    def __init__(self, ser, colour):
+        self.m_colour = colour
+        self.m_serial = ser
+        self.m_state = "off"
+
+        self.m_funcmap={}
+        self.m_funcmap["red"]=self.m_serial.setDTR
+        self.m_funcmap["green"]=self.m_serial.setRTS
+        assert (colour in self.m_funcmap.keys())
+
+        self.set_state(self.m_state)
+
+        return
+
+    def set_state(self, state):
+        self.m_state = state
+        if state == "on":
+            self.m_funcmap[self.m_colour]=True
+        elif state == "off":
+            self.m_funcmap[self.m_colour]=False
+        else:
+            assert(False and "bad led state")
+
+        return
+
+    def get_state(self):
+        return self.m_state
+    
+
 global g_wait_signals
 g_wait_signals = (TIOCM_DSR | TIOCM_CTS | TIOCM_CD)
 
@@ -198,7 +228,13 @@ def main():
     serport = '/dev/ttyUSB0'
 
     ser = serial.Serial(serport)
-  
+
+    green_led = LED(ser, "green")
+
+    red_led = LED(ser, "red")
+
+    green_led.set_state( "off" )
+    red_led.set_state( "off" )
      # TODO set volume using amixer on boot
 
     if not ser:
