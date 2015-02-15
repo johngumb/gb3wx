@@ -1,0 +1,4 @@
+from edge of PC
+blue (usb sound card)
+pink with black tape (usb ttl converter, signalling)
+pink (test head)
