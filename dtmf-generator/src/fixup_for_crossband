@@ -1,13 +1,6 @@
 #!/bin/bash -x
 
-send_dtmf()
-{
-local del=8
-echo $2
-./dtmfgen -drate_convert -k$1 -t100
-sleep ${del}
-}
-
+. ./send_dtmf.sh
 
 setup_gb3wx()
 {
@@ -28,6 +21,11 @@ send_dtmf *0270 "rx2->tx2_disa"
 #./dtmfgen -drate_convert -k*056 -t100
 #./dtmfgen -drate_convert -k*057 -t100
 
+send_dtmf *0461
+send_dtmf *0471
+send_dtmf *0561
+send_dtmf *0571
+
 #
 # courtesy tone programming
 # TODO
@@ -44,6 +42,11 @@ send_dtmf *7139932 R2T2-CT-E
 #
 send_dtmf *10
 
+#
+# load power up settings
+#
+send_dtmf \*\*
+
 # 
 #
 # leave privileged mode
@@ -51,4 +54,4 @@ send_dtmf *10
 send_dtmf \# quit
 }
 
-#setup_gb3wx
+setup_gb3wx
