@@ -105,7 +105,7 @@ def wait_for_qso_start(ser):
 
         newsignals = get_qso_signals(ser)
 
-        if newsignals == oldsignals:
+        if newsignals == signals:
             dsr = ser.getDSR()
             cts = ser.getCTS()
             dcd = ser.getCD()
@@ -121,7 +121,7 @@ def wait_for_qso_start(ser):
             else:
                 break
         else:
-            print "debounce: %s did not match %s" % (newsignals,oldsignals)
+            print "debounce: %s did not match %s" % (newsignals,signals)
         
     result = None
     
