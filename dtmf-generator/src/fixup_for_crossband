@@ -7,10 +7,12 @@ setup_gb3wx()
 # password
 send_dtmf 2730 password
 
-send_dtmf *0060 "rx1->tx1_disa"
+#send_dtmf *0060 "rx1->tx1_disa"
+send_dtmf *0061 "rx1->tx1_disa"
 send_dtmf *0071 "rx1->tx2_ena"
 send_dtmf *0261 "rx2->tx1_ena"
-send_dtmf *0270 "rx2->tx2_disa"
+#send_dtmf *0270 "rx2->tx2_disa"
+send_dtmf *0271 "rx2->tx2_disa"
 
 #
 # courtesy tones are enabled by default on both transmitters
@@ -21,10 +23,10 @@ send_dtmf *0270 "rx2->tx2_disa"
 #./dtmfgen -drate_convert -k*056 -t100
 #./dtmfgen -drate_convert -k*057 -t100
 
-send_dtmf *0460
+send_dtmf *0461
 send_dtmf *0471
 send_dtmf *0561
-send_dtmf *0570
+send_dtmf *0571
 
 #
 # courtesy tone programming
