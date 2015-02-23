@@ -21,10 +21,10 @@ send_dtmf *0270 "rx2->tx2_disa"
 #./dtmfgen -drate_convert -k*056 -t100
 #./dtmfgen -drate_convert -k*057 -t100
 
-send_dtmf *0461
+send_dtmf *0460
 send_dtmf *0471
 send_dtmf *0561
-send_dtmf *0571
+send_dtmf *0570
 
 #
 # courtesy tone programming
@@ -40,7 +40,7 @@ send_dtmf *7139932 R2T2-CT-E
 # save settings
 # 0 is the power up group
 #
-send_dtmf *10
+send_dtmf \*10
 
 #
 # load power up settings
