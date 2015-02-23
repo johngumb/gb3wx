@@ -32,9 +32,9 @@ class TestRadio:
         else:
             assert(False)
         
-        for i in range(period):
+        for i in range(int(period*10)):
             print self.s_serial.getDSR(), self.s_serial.getCTS()
-            time.sleep(1)
+            time.sleep(0.1)
 
         if self.m_signal_detect=="DTR":
             self.s_serial.setDTR(False)
@@ -73,7 +73,7 @@ def main():
         time.sleep(1)
         print "stabilising..."
 
-    n = 10
+    n = 1
     print "sleep %d" % n
     time.sleep(n)
 
@@ -89,20 +89,8 @@ def main():
 
     time.sleep(2)
 
-#    t_10_metre = TestRadio("RTS","CTS")
-#    t_10_metre.spoof_signal_received()
-
-    for i in range(14):
-        print ser.getDSR(), ser.getCTS()
-        time.sleep(1)
-
     print "first over"
     testrig.spoof_signal_received(20)
-
-
-#    while True:
-#        print ser.getDSR(), ser.getCTS()
-#        time.sleep(1)
 
     print "second over"
     testrig2.spoof_signal_received(20)
