@@ -45,7 +45,7 @@ class LED:
     def __init__(self, ser, colour):
         self.m_colour = colour
         self.m_serial = ser
-        self.m_state = "off"
+        self.m_state = "init"
 
         self.m_funcmap={}
         self.m_funcmap["red"]=self.m_serial.setDTR
@@ -57,6 +57,9 @@ class LED:
         return
 
     def set_state(self, state):
+        if state == self.m_state:
+            return
+
         self.m_state = state
         if state == "on":
             self.m_funcmap[self.m_colour](True)
@@ -64,6 +67,8 @@ class LED:
             self.m_funcmap[self.m_colour](False)
         else:
             assert(False and "bad led state")
+
+        print self.m_colour, "LED", self.m_state
 
         return
 
@@ -234,7 +239,8 @@ def main():
     red_led = LED(ser, "red")
 
     green_led.set_state( "off" )
-    red_led.set_state( "on" )
+    red_led.set_state( "off" )
+
      # TODO set volume using amixer on boot
 
     if not ser:
@@ -248,12 +254,20 @@ def main():
 
         rec_handle = start_record(mode)
 
+        if mode == "10_6":
+            led = red_led
+        elif mode == "6_10":
+            led = green_led
+        else:
+            assert ( False )
+
+        led.set_state( "on" )
         print "recording"
         wait_for_qso_stop(ser)
         print "stopping recording"
-        
-        stop_record(rec_handle)
 
+        stop_record(rec_handle)
+        led.set_state( "off" )
 
 if __name__ == "__main__":
     main()
