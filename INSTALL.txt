@@ -26,3 +26,5 @@ add the following to /etc/modprobe.d/dist-alsa.conf:
 #
 options snd slots=,snd_usb_audio
 
+call /home/gb3wx/gb3wx/alsainit-gb3wx from /etc/rc.local
+
