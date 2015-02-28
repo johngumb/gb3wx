@@ -1,20 +1,23 @@
+#!/bin/bash
+
 DEV=hw:0
 SUDO=""
+AMIXER=/usr/bin/amixer
 
-${SUDO} amixer -D${DEV} sset Capture 9 cap on
-${SUDO} amixer -D${DEV} sset Mic 100 cap on
+${SUDO} ${AMIXER} -D${DEV} sset Capture 9 cap on
+${SUDO} ${AMIXER} -D${DEV} sset Mic 100 cap on
 
 DEV=hw:1
 
 # enable line input
-${SUDO} amixer -D${DEV} sset Line 128 cap on
+${SUDO} ${AMIXER} -D${DEV} sset Line 128 cap on
 
 # disable mic input
-${SUDO} amixer -D${DEV} sset Mic 0 off
+${SUDO} ${AMIXER} -D${DEV} sset Mic 0 off
 
 # playback to controller for testing purposes
-${SUDO} amixer -D${DEV} sset Line 128
+${SUDO} ${AMIXER} -D${DEV} sset Line 128
 
-${SUDO} amixer -D${DEV} sset 'Digital In' off
+${SUDO} ${AMIXER} -D${DEV} sset 'Digital In' off
 
 
