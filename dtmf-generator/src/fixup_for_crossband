@@ -3,18 +3,18 @@
 . ./send_dtmf.sh
 echo $0
 echo $(dirname $0)
-PWFILE=$(dirname $0)/password
-if [ -s ${PWFILE} ]; then
-   PASSWORD=$(cat ${PWFILE})
+ACFILE=$(dirname $0)/access
+if [ -s ${ACFILE} ]; then
+   ACCESS=$(cat ${ACFILE})
 else
-   echo "no password file"
+   echo "no access file"
    exit 1
 fi
 
 setup_gb3wx()
 {
-# password
-send_dtmf ${PASSWORD} password
+# access
+send_dtmf ${ACCESS} access
 
 #send_dtmf *0060 "rx1->tx1_disa"
 send_dtmf *0061 "rx1->tx1_disa"
