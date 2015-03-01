@@ -131,10 +131,10 @@ def wait_for_qso_start(ser):
     result = None
     
     if dsr:
-        result = "10_6"
+        result = "6_10"
 
     if cts:
-        result = "6_10"
+        result = "10_6"
 
     # need to return TIOCM_DSR or TIOCM_CTS here
     # so we can wait for the appropriate one to
