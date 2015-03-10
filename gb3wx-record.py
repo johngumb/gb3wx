@@ -17,7 +17,7 @@ import serial
 # 1 second for debounce
 #
 global g_debounce_time
-g_debounce_time=0.2
+g_debounce_time=1.0
 
 #
 # (modified) USB serial pinout
