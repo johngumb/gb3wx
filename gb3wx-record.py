@@ -184,7 +184,9 @@ def dstdir_fname():
     return (dstdirname, fname)
 
 def start_record( direction ):
-    DATA_DIR="/home/gb3wx/data"
+    DATA_DIR_FILE=os.path.expanduser("~/gb3wx/datadir")
+    DATA_DIR=os.path.expanduser(open(DATA_DIR_FILE).read()).strip()
+
     data_file="%s.wav" % direction
 
     (dstdir, fname) = dstdir_fname()
