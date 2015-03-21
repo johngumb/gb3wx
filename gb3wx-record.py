@@ -249,6 +249,10 @@ def main():
         print >> sys.stderr, "serial port %s not found" % serport
         sys.exit(1)
 
+    #
+    # TODO write a file per day which provides a summary of activity
+    # eg. total minutes active 10/6 and 6/10
+    #
     while True:
         wait_for_inactivity(ser)
 
