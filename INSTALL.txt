@@ -16,6 +16,7 @@ sudo yum install jack-audio-connection-kit.i686
 sudo yum install jack-audio-connection-kit-example-clients.i686
 sudo yum install jack_capture.i686
 sudo yum install alsa-plugins-jack.i686
+sudo yum remove PackageKit
 
 add the following to /etc/modprobe.d/dist-alsa.conf:
 
@@ -27,4 +28,5 @@ add the following to /etc/modprobe.d/dist-alsa.conf:
 options snd slots=,snd_usb_audio
 
 call /home/gb3wx/gb3wx/alsainit-gb3wx from /etc/rc.local
+
 
