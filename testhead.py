@@ -17,12 +17,29 @@ class TestRadio:
     s_serial_device_name = "/dev/ttyUSB1"
     s_serial = serial.Serial(s_serial_device_name)
 
-    def __init__(self, signal_detect, tx_on ):
+    def __init__(self, signal_detect, tx_on, rx_audiofile ):
         self.m_signal_detect = signal_detect
         self.m_tx_on = tx_on
+        self.m_rx_audiofile = rx_audiofile
         self.s_serial.setDTR(False)
         self.s_serial.setRTS(False)
         return
+
+    def start_playback(self):
+
+        f = open(os.path.join(self.m_rx_audiofile), "rb")
+
+        with f:
+
+            handle = subprocess.Popen(['aplay','-Dhw:1'], stdin=f, stderr=subprocess.PIPE)
+
+        return handle
+
+    def stop_playback(self, handle):
+        handle.terminate()
+        status = handle.communicate()
+        retcode = handle.wait()
+        return retcode
 
     def spoof_signal_received(self,period=4):
         if self.m_signal_detect=="DTR":
@@ -32,9 +49,13 @@ class TestRadio:
         else:
             assert(False)
         
+        h = self.start_playback()
+
         for i in range(int(period*10)):
             print self.s_serial.getDSR(), self.s_serial.getCTS()
             time.sleep(0.1)
+
+        self.stop_playback(h)
 
         if self.m_signal_detect=="DTR":
             self.s_serial.setDTR(False)
@@ -60,9 +81,11 @@ class TestRadio:
 global g_wait_signals
 g_wait_signals = (TIOCM_DSR | TIOCM_CTS | TIOCM_CD)
 def main():
-    t_6_metre = TestRadio("DTR","DSR")
+    l="../lefttest16.wav"
+    r="../righttest16.wav"
+    t_6_metre = TestRadio("DTR","DSR",l)
 
-    t_10_metre = TestRadio("RTS","CTS")
+    t_10_metre = TestRadio("RTS","CTS",r)
 
     ser = t_6_metre.get_serial_device()
 
