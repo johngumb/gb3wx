@@ -31,7 +31,7 @@ class TestRadio:
 
         with f:
 
-            handle = subprocess.Popen(['aplay','-Dhw:1'], stdin=f, stderr=subprocess.PIPE)
+            handle = subprocess.Popen(['aplay','-Dplughw:1'], stdin=f, stderr=subprocess.PIPE)
 
         return handle
 
