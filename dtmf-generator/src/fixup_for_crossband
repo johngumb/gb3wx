@@ -11,15 +11,68 @@ else
    exit 1
 fi
 
+declare -A cw_array
+cw_array[0]=00
+cw_array[1]=01
+cw_array[2]=02
+cw_array[3]=03
+cw_array[4]=04
+cw_array[5]=05
+cw_array[6]=06
+cw_array[7]=07
+cw_array[8]=08
+cw_array[9]=09
+cw_array[A]=21
+cw_array[B]=22
+cw_array[C]=23
+cw_array[D]=31
+cw_array[E]=32
+cw_array[F]=33
+cw_array[G]=41
+cw_array[H]=42
+cw_array[I]=43
+cw_array[J]=51
+cw_array[K]=52
+cw_array[L]=53
+cw_array[M]=61
+cw_array[N]=62
+cw_array[O]=63
+cw_array[P]=71
+cw_array[Q]=70
+cw_array[R]=72
+cw_array[S]=73
+cw_array[T]=81
+cw_array[U]=82
+cw_array[V]=83
+cw_array[W]=91
+cw_array[X]=92
+cw_array[Y]=93
+cw_array[Z]=90
+cw_array[\ ]=11
+cw_array[/]=12
+
+char_to_cw_code()
+{
+    local char=$1
+
+    echo ${cw_array[${char}]}
+}
+
 setup_gb3wx()
 {
 # access
 send_dtmf ${ACCESS} access
 
+#
+# audio routing - maybe this is controlled via
+# link state control at the end?
+#
+if false; then
 send_dtmf *0061 "rx1->tx1_ena"
 send_dtmf *0071 "rx1->tx2_ena"
 send_dtmf *0261 "rx2->tx1_ena"
 send_dtmf *0271 "rx2->tx2_ena"
+fi
 
 #
 # courtesy tones are enabled by default on both transmitters
@@ -59,6 +112,41 @@ send_dtmf *710${t1}
 send_dtmf *711${t2}
 send_dtmf *712${t1}
 send_dtmf *713${t2}
+
+#
+# set beacon time
+#
+let beaconmins=9
+let beaconsecs=${beaconmins}*60
+let bt=${beaconsecs}/10
+send_dtmf *302${bt}
+send_dtmf *303${bt}
+
+#
+# max length 12 characters
+#
+beaconstr="GB3WX IO81VC"
+idx=0
+beaconcode=""
+maxbeaconlength=12
+if [ ${#beaconstr} -gt 12 ]; then
+    echo "${beaconstr} too long: max length ${maxbeaconlength}"
+    exit 1
+fi
+while [ $idx -lt ${#beaconstr} ]; do
+    beaconchar=${beaconstr:$idx:1}
+    beaconcode=${beaconcode}$(char_to_cw_code "${beaconchar}")
+    let idx=$idx+1
+done
+send_dtmf *701${beaconcode} "CW ID string for ID 0: ${beaconstr}"
+
+#
+# enable CW ID1 on transmitters 1 and 2
+#
+send_dtmf *0431 "ID enable TX2"
+send_dtmf *0440 "ID0"
+send_dtmf *0531 "ID enable TX2"
+send_dtmf *0540 "ID0"
 
 #
 # save settings
