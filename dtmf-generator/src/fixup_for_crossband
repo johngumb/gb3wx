@@ -78,10 +78,10 @@ fi
 # courtesy tones are enabled by default on both transmitters
 # see page 36 4.5 and page 37 4.6
 #
-send_dtmf *0461
-send_dtmf *0471
-send_dtmf *0561
-send_dtmf *0571
+send_dtmf *0461 "Tx1: Receiver 1 Courtesy Tone Enable"
+send_dtmf *0471 "Tx1: Receiver 2 Courtesy Tone Enable"
+send_dtmf *0561 "Tx2: Receiver 1 Courtesy Tone Enable"
+send_dtmf *0571 "Tx2: Receiver 2 Courtesy Tone Enable"
 
 #
 # courtesy tone programming
@@ -108,10 +108,10 @@ t2=0520051505120508
 # ADAD
 # 17 22 17 10
 
-send_dtmf *710${t1}
-send_dtmf *711${t2}
-send_dtmf *712${t1}
-send_dtmf *713${t2}
+send_dtmf *710${t1} "Courtesy tone DADG"
+send_dtmf *711${t2} "Courtesy tone CGEC"
+send_dtmf *712${t1} "Courtesy tone DADG"
+send_dtmf *713${t2} "Courtesy tone CGEC"
 
 #
 # set beacon time
@@ -119,8 +119,8 @@ send_dtmf *713${t2}
 let beaconmins=9
 let beaconsecs=${beaconmins}*60
 let bt=${beaconsecs}/10
-send_dtmf *302${bt}
-send_dtmf *303${bt}
+send_dtmf *302${bt} "ID Timer transmitter 1 ${beaconsecs} seconds"
+send_dtmf *303${bt} "ID Timer transmitter 1 {beaconsecs} seconds"
 
 #
 # max length 12 characters
@@ -143,21 +143,21 @@ send_dtmf *700${beaconcode} "CW ID string for ID 1: ${beaconstr}"
 #
 # enable CW ID1 on transmitters 1 and 2
 #
-send_dtmf *0431 "ID enable TX2"
-send_dtmf *0440 "ID0"
-send_dtmf *0531 "ID enable TX2"
-send_dtmf *0540 "ID0"
+send_dtmf *0431 "ID enable Tx1"
+send_dtmf *0440 "Tx1: ID in use: ID0"
+send_dtmf *0531 "ID enable Tx2"
+send_dtmf *0540 "Tx2: ID in use: ID0"
 
 #
 # save settings
 # 0 is the power up group
 #
-send_dtmf \*10
+send_dtmf \*10 "Save settings as default (group 0)"
 
 #
 # load power up settings
 #
-send_dtmf \*\*
+send_dtmf \*\* "Load power up settings"
 
 #
 # Wait for the initial annoucement of firmaware version etc.
@@ -168,7 +168,7 @@ sleep 5
 #
 # leave privileged mode
 #
-send_dtmf \# quit
+send_dtmf \# "quit"
 
 #
 # link state routing sec 5.4 link state control
