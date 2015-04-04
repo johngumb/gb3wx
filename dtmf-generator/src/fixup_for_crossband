@@ -138,7 +138,7 @@ while [ $idx -lt ${#beaconstr} ]; do
     beaconcode=${beaconcode}$(char_to_cw_code "${beaconchar}")
     let idx=$idx+1
 done
-send_dtmf *701${beaconcode} "CW ID string for ID 0: ${beaconstr}"
+send_dtmf *700${beaconcode} "CW ID string for ID 1: ${beaconstr}"
 
 #
 # enable CW ID1 on transmitters 1 and 2
