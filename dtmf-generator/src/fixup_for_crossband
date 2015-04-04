@@ -17,11 +17,11 @@ setup_gb3wx()
 send_dtmf ${ACCESS} access
 
 #send_dtmf *0060 "rx1->tx1_disa"
-send_dtmf *0061 "rx1->tx1_disa"
+send_dtmf *0061 "rx1->tx1_ena"
 send_dtmf *0071 "rx1->tx2_ena"
 send_dtmf *0261 "rx2->tx1_ena"
 #send_dtmf *0270 "rx2->tx2_disa"
-send_dtmf *0271 "rx2->tx2_disa"
+send_dtmf *0271 "rx2->tx2_ena"
 
 #
 # courtesy tones are enabled by default on both transmitters
@@ -78,11 +78,24 @@ send_dtmf \*10
 #
 send_dtmf \*\*
 
+#
+# Wait for the initial annoucement of firmaware version etc.
+#
+sleep 5
+
 # 
 #
 # leave privileged mode
 #
 send_dtmf \# quit
+
+#
+# link state routing sec 5.4 link state control
+# NOTE this is a user command and must be done
+# in a non-privileged state
+#
+send_dtmf 0433
+
 }
 
 setup_gb3wx
