@@ -4,8 +4,9 @@ DEV=hw:0
 SUDO=""
 AMIXER=/usr/bin/amixer
 
-${SUDO} ${AMIXER} -D${DEV} sset Capture 9 cap on
-${SUDO} ${AMIXER} -D${DEV} sset Mic 100 cap on
+#TODO use hw:3
+#${SUDO} ${AMIXER} -D${DEV} sset Capture 9 cap on
+#${SUDO} ${AMIXER} -D${DEV} sset Mic 100 cap on
 
 DEV=hw:1
 
