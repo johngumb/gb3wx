@@ -95,7 +95,14 @@ def wait_for_qso_start(ser):
     # wait for status change
     #
     while True:
-        ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
+        #
+        # qso happening already? (dsr XOR cts)
+        #
+        dsr = ser.getDSR()
+        cts = ser.getCTS()
+        if dsr == cts:
+		ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
+
         print "DSR",ser.getDSR()
         print "CTS",ser.getCTS()    
         print "DCD",ser.getCD()
@@ -204,7 +211,7 @@ def start_record( direction ):
 
     with f:
         try:
-            p = subprocess.Popen(['arecord','-fcd','-Dhw:1'], stdout=f, stderr=subprocess.PIPE)
+            p = subprocess.Popen(['arecord','-fcd','-Dhw:0'], stdout=f, stderr=subprocess.PIPE)
         except OSError as e:
             print e.errno
             print e
@@ -249,12 +256,13 @@ def main():
         print >> sys.stderr, "serial port %s not found" % serport
         sys.exit(1)
 
+    wait_for_inactivity(ser)
+
     #
     # TODO write a file per day which provides a summary of activity
     # eg. total minutes active 10/6 and 6/10
     #
     while True:
-        wait_for_inactivity(ser)
 
         mode = wait_for_qso_start(ser)
 
