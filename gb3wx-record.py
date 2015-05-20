@@ -130,6 +130,12 @@ def wait_for_qso_start(ser):
                 # wait until we get just dsr or cts; dcd for debug
                 #
                 print "dsr and cts set, bogus response, re-arm"
+            elif (not dsr) and (not cts):
+                #
+                # HACK - bogus response
+                # wait until we get just dsr or cts; dcd for debug
+                #
+                print "dsr and cts clear, bogus response, re-arm"
             else:
                 break
         else:
