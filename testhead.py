@@ -14,7 +14,7 @@ import datetime
 import serial
 
 class TestRadio:
-    s_serial_device_name = "/dev/ttyUSB1"
+    s_serial_device_name = "/dev/ttyUSB0"
     s_serial = serial.Serial(s_serial_device_name)
 
     def __init__(self, signal_detect, tx_on, rx_audiofile ):
@@ -31,7 +31,7 @@ class TestRadio:
 
         with f:
 
-            handle = subprocess.Popen(['aplay','-Dplughw:1'], stdin=f, stderr=subprocess.PIPE)
+            handle = subprocess.Popen(['aplay','-Dplughw:2'], stdin=f, stderr=subprocess.PIPE)
 
         return handle
 

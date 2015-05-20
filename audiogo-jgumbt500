@@ -18,7 +18,7 @@ fi
 if [ -z "$1" ]; then
 /usr/local/bin/jackd -R -d net &
 sleep 2
-/usr/local/bin/jack_load audioadapter -i"-d hw:3 -r32000"
+/usr/local/bin/jack_load audioadapter -i"-d hw:1 -r32000"
 fi
 /usr/local/bin/jack_connect audioadapter:capture_1 system:playback_1
 /usr/local/bin/jack_connect audioadapter:capture_2 system:playback_2
