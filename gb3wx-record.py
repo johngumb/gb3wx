@@ -184,6 +184,9 @@ def open_result_file(filename, mode="r"):
         finally:
             f.close()
 
+def ensure_record_stopped():
+    os.system("pgrep arecord > /dev/null && killall arecord")
+
 def dstdir_fname():
     # TODO set machine timezone to UTC
 
@@ -199,6 +202,8 @@ def dstdir_fname():
 def start_record( direction ):
     DATA_DIR_FILE=os.path.expanduser("~/gb3wx/datadir")
     DATA_DIR=os.path.expanduser(open(DATA_DIR_FILE).read()).strip()
+
+    ensure_record_stopped()
 
     data_file="%s.wav" % direction
 
@@ -237,6 +242,8 @@ def stop_record(p):
 
     retcode = p.wait()
     print "retcode", retcode
+
+    ensure_record_stopped()
 
     return
 
