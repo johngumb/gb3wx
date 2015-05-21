@@ -1,0 +1,16 @@
+#!/bin/bash
+# init of soundblaster soundcard on r-pi
+DEV=hw:0
+SUDO=""
+AMIXER=/usr/bin/amixer
+
+# enable line input
+${SUDO} ${AMIXER} -D${DEV} sset Line 128 cap on
+
+# disable mic input
+${SUDO} ${AMIXER} -D${DEV} sset Mic 0 off
+
+# playback to controller for testing purposes
+${SUDO} ${AMIXER} -D${DEV} sset Line 128
+
+${SUDO} ${AMIXER} -D${DEV} sset 'Digital In' off
