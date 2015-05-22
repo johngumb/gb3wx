@@ -13,11 +13,8 @@ import string
 import datetime
 import serial
 
-#
-# 1 second for debounce
-#
 global g_debounce_time
-g_debounce_time=1.0
+g_debounce_time=0.5 # seconds
 
 #
 # (modified) USB serial pinout
@@ -32,13 +29,18 @@ g_debounce_time=1.0
 # originally TxD was green, RxD was white
 # 
 def ledtest(ser):
-    while True:
+    for i in range(5):
         time.sleep(1)
         ser.setDTR(True)
         ser.setRTS(False)
         time.sleep(1)
         ser.setDTR(False)
         ser.setRTS(True)
+    #
+    # Leave with both LEDs extinguished
+    #
+    ser.setDTR(False)
+    ser.setRTS(False)
 
 
 class LED:
@@ -82,8 +84,8 @@ g_wait_signals = (TIOCM_DSR | TIOCM_CTS | TIOCM_CD)
 def get_qso_signals(ser):
     dsr = ser.getDSR()
     cts = ser.getCTS()
-
-    return (dsr, cts)
+    dcd = ser.getCD()
+    return (dsr, cts, dcd)
 
 def wait_for_qso_start(ser):
     print "wait for qso start"
@@ -95,17 +97,20 @@ def wait_for_qso_start(ser):
     # wait for status change
     #
     while True:
+
+        (dsr, cts, dcd) = get_qso_signals(ser)
+
         #
         # qso happening already? (dsr XOR cts)
+        # if not then wait for change
         #
-        dsr = ser.getDSR()
-        cts = ser.getCTS()
-        if dsr == cts:
+        if dsr == cts and (not dcd):
 		ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
 
-        print "DSR",ser.getDSR()
-        print "CTS",ser.getCTS()    
-        print "DCD",ser.getCD()
+        (dsr, cts, dcd) = get_qso_signals(ser)
+        print "DSR",dsr
+        print "CTS",cts
+        print "DCD",dcd
         print "wait_for_qso_start: change detected"
 
         #
@@ -117,14 +122,23 @@ def wait_for_qso_start(ser):
 
         newsignals = get_qso_signals(ser)
 
+        test = False
+
         if newsignals == signals:
-            dsr = ser.getDSR()
-            cts = ser.getCTS()
-            dcd = ser.getCD()
+            (dsr, cts, dcd) = signals
+
             print "DSR",dsr
             print "CTS",cts
             print "DCD",dcd
-            if dsr and cts:
+
+            if dcd:
+                #
+                # test result takes precedence over rig signalling
+                #
+                test = True
+                break
+
+            elif dsr and cts:
                 #
                 # HACK - bogus response
                 # wait until we get just dsr or cts; dcd for debug
@@ -137,6 +151,10 @@ def wait_for_qso_start(ser):
                 #
                 print "dsr and cts clear, bogus response, re-arm"
             else:
+                #
+                # either dsr or cts is active - a qso is
+                # happening one way or the other
+                #
                 break
         else:
             print "debounce: %s did not match %s" % (newsignals,signals)
@@ -149,9 +167,9 @@ def wait_for_qso_start(ser):
     if cts:
         result = "10_6"
 
-    # need to return TIOCM_DSR or TIOCM_CTS here
-    # so we can wait for the appropriate one to
-    # go away.
+    if test:
+        result = "test"
+
     return result
 
 def wait_for_inactivity(ser):
@@ -279,22 +297,25 @@ def main():
 
         mode = wait_for_qso_start(ser)
 
-        rec_handle = start_record(mode)
-
-        if mode == "10_6":
-            led = red_led
-        elif mode == "6_10":
-            led = green_led
+        if mode == "test":
+            ledtest(ser)
         else:
-            assert ( False )
+            rec_handle = start_record(mode)
 
-        led.set_state( "on" )
-        print "recording"
-        wait_for_qso_stop(ser)
-        print "stopping recording"
+            if mode == "10_6":
+                led = red_led
+            elif mode == "6_10":
+                led = green_led
+            else:
+                assert ( False )
 
-        stop_record(rec_handle)
-        led.set_state( "off" )
+            led.set_state( "on" )
+            print "recording"
+            wait_for_qso_stop(ser)
+            print "stopping recording"
+
+            stop_record(rec_handle)
+            led.set_state( "off" )
 
 if __name__ == "__main__":
     main()
