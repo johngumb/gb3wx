@@ -217,9 +217,13 @@ def dstdir_fname():
     fname = dstdirname + "_" + "%02d_%02d_%02d_%02d" % (t.day, t.hour, t.minute, t.second)
     return (dstdirname, fname)
 
-def start_record( direction ):
+def data_dir():
     DATA_DIR_FILE=os.path.expanduser("~/gb3wx/datadir")
     DATA_DIR=os.path.expanduser(open(DATA_DIR_FILE).read()).strip()
+
+    return DATA_DIR
+
+def start_record( direction ):
 
     ensure_record_stopped()
 
@@ -227,7 +231,7 @@ def start_record( direction ):
 
     (dstdir, fname) = dstdir_fname()
 
-    fullpath = os.path.join(DATA_DIR,dstdir,fname+"_"+data_file)
+    fullpath = os.path.join(data_dir(),dstdir,fname+"_"+data_file)
 
     if not os.path.exists(os.path.dirname(fullpath)):
         os.makedirs(os.path.dirname(fullpath))
@@ -269,6 +273,11 @@ def main():
 #    dstdir()
 
 #    return test_audio()
+
+    if sys.argv[1] == "--querydir":
+         (d, f) = dstdir_fname()
+         print os.path.join(data_dir(),d)
+         sys.exit(0)
 
     serport = '/dev/ttyUSB0'
 

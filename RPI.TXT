@@ -1,0 +1,3 @@
+rpi-update
+yum -y install pyserial alsa-utils gcc-c++
+
