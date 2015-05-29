@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DATADIR=$(eval echo $(cat ~/gb3wx/datadir))
-LIMIT="6 hours"
+LIMIT="6 months"
 TESTFILE=/tmp/testfile
 delete_oldstuff()
 {
@@ -9,14 +9,15 @@ delete_oldstuff()
     find ${DATADIR} -type f  | while read fname; do
         if [ ${fname} -ot ${TESTFILE} ]; then
             echo "${fname} too old"
+            rm -f ${fname}
         fi
     done
     rm -f ${TESTFILE}
 
     find ${DATADIR} -type d | while read directory; do
         if [ -z "$(ls ${directory})" ]; then
-            #rmdir ${directory}
             echo "${directory} is empty"
+            rmdir ${directory}
         fi
     done
 }
