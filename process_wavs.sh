@@ -6,7 +6,7 @@ iswav()
 {
     file=$1
 
-     [ "${file##*.}" = "wav" ]
+     [ "${file##*.}" = "wav" ] && [ -s ${fname} ]
 }
 
 recdir=${DATADIR}
