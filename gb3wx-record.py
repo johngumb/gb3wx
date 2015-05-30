@@ -203,7 +203,7 @@ def open_result_file(filename, mode="r"):
             f.close()
 
 def ensure_record_stopped():
-    os.system("pgrep arecord > /dev/null && killall arecord")
+    os.system("/usr/bin/pgrep arecord > /dev/null && /usr/bin/killall arecord")
 
 def dstdir_fname():
     # TODO set machine timezone to UTC
