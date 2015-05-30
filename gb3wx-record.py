@@ -270,15 +270,6 @@ def stop_record(p):
     return
 
 def main():
-#    dstdir()
-
-#    return test_audio()
-
-    if sys.argv[1] == "--querydir":
-         (d, f) = dstdir_fname()
-         print os.path.join(data_dir(),d)
-         sys.exit(0)
-
     serport = '/dev/ttyUSB0'
 
     ser = serial.Serial(serport)

@@ -9,12 +9,12 @@ iswav()
      [ "${file##*.}" = "wav" ]
 }
 
-recdir=$(python gb3wx-record.py --querydir)
+recdir=${DATADIR}
 
 if [ -d ${recdir} ]; then
     find ${recdir}  | while read fname; do
         if iswav ${fname}; then
-            if ./wav2mp3.sh ${fname}; then
+            if $(dirname $0)/wav2mp3.sh ${fname}; then
                 rm -f ${fname}
             fi
         fi
