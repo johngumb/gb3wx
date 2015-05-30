@@ -2,6 +2,11 @@
 
 outtmp=/tmp/$(basename $1)
 
+if [ ! -s $1 ]; then
+    echo "$1 empty"
+    exit 1
+fi
+
 sox $1 -b 16 ${outtmp} dither -s
 
 soxrc=$?
