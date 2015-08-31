@@ -1,3 +1,12 @@
+#
+# hw:1 - blue c-media usb audio device - jack runs on this (audiogo-jgumbt500)
+# plantronics simple usb headphone adapter: used for generation
+# of simulated audio. goes in USB slot nearest edge. Then simulated signalling
+# (pink) then audio capture on the repeater outputs (blue c-media usb audio
+# device)
+#
+# NOTE the plantronics device tends to move about a bit on the USB
+#
 import sys
 from fcntl import  ioctl
 from termios import (
@@ -31,7 +40,7 @@ class TestRadio:
 
         with f:
 
-            handle = subprocess.Popen(['aplay','-Dplughw:2'], stdin=f, stderr=subprocess.PIPE)
+            handle = subprocess.Popen(['aplay','-Dplughw:3'], stdin=f, stderr=subprocess.PIPE)
 
         return handle
 
