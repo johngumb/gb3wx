@@ -2,3 +2,17 @@ from edge of PC
 blue (usb sound card)
 pink with black tape (usb ttl converter, signalling)
 pink (test head)
+
+NHRC DB9 connector
+pin 1 - test button                                     DCD     RED
+pin 2 - audio left (connected to audio in left)         
+pin 3 - audio right (connected to audio in right)
+pin 4 - red - drives red LED                            DTR     WHITE
+pin 5 - tx audio monitor
+pin 6 - green - record signal                           DSR     GREEN
+pin 7 - yellow - drives green LED                       RTS     YELLOW
+pin 8 - blue - record signal                            CTS     BLUE
+pin 9 - tx audio monitor
+
+lower case: repeater wiring
+upper case: USB to serial cable colour.
