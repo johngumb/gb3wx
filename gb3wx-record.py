@@ -245,6 +245,8 @@ def start_record( direction ):
     with f:
         try:
             p = subprocess.Popen(['arecord','-fcd','-Dhw:0'], stdout=f, stderr=subprocess.PIPE)
+            print "/usr/bin/chrt -r -p 99 %s" % p.pid
+            os.system("/usr/bin/chrt -r -p 99 %s" % p.pid)
         except OSError as e:
             print e.errno
             print e
