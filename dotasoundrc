@@ -36,6 +36,7 @@ ctl.card3 {
   card 1
 }
 
+# used for DTMF generator program
 pcm.monocard {
   slave.pcm card3
   slave.channels 2
