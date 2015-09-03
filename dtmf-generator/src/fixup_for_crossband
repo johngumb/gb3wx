@@ -160,7 +160,7 @@ send_dtmf \*10 "Save settings as default (group 0)"
 send_dtmf \*\* "Load power up settings"
 
 #
-# Wait for the initial annoucement of firmaware version etc.
+# Wait for the initial annoucement of firmware version etc.
 #
 sleep 5
 
