@@ -1,4 +1,4 @@
 #!/bin/bash
-# lives in /etc/rc.d
 /home/gb3wx/gb3wx/alsainit-gb3wxpi
-(/bin/sleep 30 && /bin/sudo -u gb3wx /bin/bash /home/gb3wx/gb3wx/gb3wx-record-wrapper.sh > /tmp/gb3wx-record.log 2>&1) &
+(/bin/sleep 30 && /bin/sudo -u gb3wx /bin/bash /home/gb3wx/gb3wx/gb3wx-record-wrapper.sh > /tmp/gb3wx-record-wrapper.log 2>&1) &
+/sbin/service ntpd start
