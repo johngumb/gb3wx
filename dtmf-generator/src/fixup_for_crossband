@@ -67,12 +67,10 @@ send_dtmf ${ACCESS} access
 # audio routing - maybe this is controlled via
 # link state control at the end?
 #
-if false; then
 send_dtmf *0061 "rx1->tx1_ena"
 send_dtmf *0071 "rx1->tx2_ena"
 send_dtmf *0261 "rx2->tx1_ena"
 send_dtmf *0271 "rx2->tx2_ena"
-fi
 
 #
 # courtesy tones are enabled by default on both transmitters
@@ -85,38 +83,40 @@ send_dtmf *0571 "Tx2: Receiver 2 Courtesy Tone Enable"
 
 #
 # courtesy tone programming
-# TODO
-# change once we figure out what's going on
+# -- use our custom tones instead of CW
 #
-#send_dtmf *7109931 R1T1-CT-D
-#send_dtmf *7119952 R1T2-CT-K
-#send_dtmf *7129953 R2T1-CT-L
-#send_dtmf *7139932 R2T2-CT-E
+use_cw=false
+if ${use_cw}; then
+    send_dtmf *7109931 R1T1-CT-D
+    send_dtmf *7119952 R1T2-CT-K
+    send_dtmf *7129953 R2T1-CT-L
+    send_dtmf *7139932 R2T2-CT-E
+else
+    #t1=0512051505190522
 
-#t1=0512051505190522
+    # DADG
+    t1=0522051705100503
 
-# DADG
-t1=0522051705100503
+    # F# D F# D
+    #t2=0514051005140510
 
-# F# D F# D
-#t2=0514051005140510
+    # CGEC
+    #20 15 12 8
+    t2=0520051505120508
 
-# CGEC
-#20 15 12 8
-t2=0520051505120508
+    # ADAD
+    # 17 22 17 10
 
-# ADAD
-# 17 22 17 10
-
-send_dtmf *710${t1} "Courtesy tone DADG"
-send_dtmf *711${t2} "Courtesy tone CGEC"
-send_dtmf *712${t1} "Courtesy tone DADG"
-send_dtmf *713${t2} "Courtesy tone CGEC"
+    send_dtmf *710${t1} "Courtesy tone DADG"
+    send_dtmf *711${t2} "Courtesy tone CGEC"
+    send_dtmf *712${t1} "Courtesy tone DADG"
+    send_dtmf *713${t2} "Courtesy tone CGEC"
+fi
 
 #
 # set beacon time
 #
-let beaconmins=9
+let beaconmins=10
 let beaconsecs=${beaconmins}*60
 let bt=${beaconsecs}/10
 send_dtmf *302${bt} "ID Timer transmitter 1 ${beaconsecs} seconds"
@@ -148,6 +148,11 @@ send_dtmf *0440 "Tx1: ID in use: ID0"
 send_dtmf *0531 "ID enable Tx2"
 send_dtmf *0540 "Tx2: ID in use: ID0"
 
+# page 25 12 WPM Tx 1
+send_dtmf \*31212
+
+# page 25 12 WPM Tx 2
+send_dtmf \*31412
 #
 # save settings
 # 0 is the power up group
@@ -174,6 +179,9 @@ send_dtmf \# "quit"
 # link state routing sec 5.4 link state control
 # NOTE this is a user command and must be done
 # in a non-privileged state
+#
+# jag 13/10/15 try explicit audio routing
+# in conjunction with this.
 #
 send_dtmf 0433
 
