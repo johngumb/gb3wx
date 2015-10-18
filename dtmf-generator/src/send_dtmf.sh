@@ -2,9 +2,9 @@
 
 send_dtmf()
 {
-local del=8
+local del=9
 echo $2
-./dtmfgen -drate_convert -k$1 -t100
+./dtmfgen -drate_convert -k$1 -t150
 sleep ${del}
 if [ -n "$2" ]; then
     echo
