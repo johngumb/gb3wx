@@ -183,7 +183,7 @@ send_dtmf \# "quit"
 # jag 13/10/15 try explicit audio routing
 # in conjunction with this.
 #
-send_dtmf 0433
+send_dtmf 0421
 
 }
 
