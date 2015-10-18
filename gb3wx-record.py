@@ -208,11 +208,9 @@ def ensure_record_stopped():
 def dstdir_fname():
     # TODO set machine timezone to UTC
 
-
     t = datetime.datetime.utcnow()
-    #t = utc_datetime_now()
 
-    dstdirname = "%s_%s" % ( t.year, t.month)
+    dstdirname = "%04d_%02d" % ( t.year, t.month)
 
     fname = dstdirname + "_" + "%02d_%02d_%02d_%02d" % (t.day, t.hour, t.minute, t.second)
     return (dstdirname, fname)
