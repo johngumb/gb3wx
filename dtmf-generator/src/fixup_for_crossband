@@ -67,10 +67,10 @@ send_dtmf ${ACCESS} access
 # audio routing - maybe this is controlled via
 # link state control at the end?
 #
-send_dtmf *0061 "rx1->tx1_ena"
+send_dtmf *0060 "rx1->tx1_ena"
 send_dtmf *0071 "rx1->tx2_ena"
 send_dtmf *0261 "rx2->tx1_ena"
-send_dtmf *0271 "rx2->tx2_ena"
+send_dtmf *0270 "rx2->tx2_ena"
 
 #
 # courtesy tones are enabled by default on both transmitters
