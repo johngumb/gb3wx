@@ -12,6 +12,7 @@ import time
 import string
 import datetime
 import serial
+import threading
 
 global g_debounce_time
 g_debounce_time=0.5 # seconds
@@ -300,6 +301,9 @@ def main():
         if mode == "test":
             ledtest(ser)
         else:
+            qso_stop_thread = threading.Thread(target=wait_for_qso_stop,args=(ser,))
+            qso_stop_thread.start()
+
             rec_handle = start_record(mode)
 
             if mode == "10_6":
@@ -311,7 +315,9 @@ def main():
 
             led.set_state( "on" )
             print "recording"
-            wait_for_qso_stop(ser)
+            #wait_for_qso_stop(ser)
+            qso_stop_thread.join()
+
             print "stopping recording"
 
             stop_record(rec_handle)
