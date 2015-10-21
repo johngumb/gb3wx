@@ -13,9 +13,37 @@ import string
 import datetime
 import serial
 import threading
+import logging
+import logging.handlers
+
+global g_logger
 
 global g_debounce_time
 g_debounce_time=0.5 # seconds
+
+def log(logger, msg):
+    do_print = False
+
+    if do_print:
+        print msg
+
+    logger(msg)
+    return
+    
+def get_logger():
+    log = logging.getLogger(__name__)
+
+    log.setLevel(logging.DEBUG)
+
+    handler = logging.handlers.SysLogHandler(address = '/dev/log')
+
+    formatter = logging.Formatter('%(module)s.%(funcName)s: %(message)s')
+    handler.setFormatter(formatter)
+
+    log.addHandler(handler)
+
+    return log
+
 
 #
 # (modified) USB serial pinout
@@ -71,7 +99,7 @@ class LED:
         else:
             assert(False and "bad led state")
 
-        print self.m_colour, "LED", self.m_state
+        log(g_logger.info, "%s LED %s" % (self.m_colour, self.m_state))
 
         return
 
@@ -89,7 +117,7 @@ def get_qso_signals(ser):
     return (dsr, cts, dcd)
 
 def wait_for_qso_start(ser):
-    print "wait for qso start"
+    log(g_logger.info, "wait for qso start")
 
     global g_wait_signals
     global g_debounce_time
@@ -109,10 +137,10 @@ def wait_for_qso_start(ser):
 		ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
 
         (dsr, cts, dcd) = get_qso_signals(ser)
-        print "DSR",dsr
-        print "CTS",cts
-        print "DCD",dcd
-        print "wait_for_qso_start: change detected"
+        log(g_logger.info, "DSR " + repr(dsr))
+        log(g_logger.info, "CTS " + repr(cts))
+        log(g_logger.info, "DCD " + repr(dcd))
+        log(g_logger.info, "wait_for_qso_start: change detected")
 
         #
         # debounce
@@ -128,10 +156,10 @@ def wait_for_qso_start(ser):
         if newsignals == signals:
             (dsr, cts, dcd) = signals
 
-            print "DSR",dsr
-            print "CTS",cts
-            print "DCD",dcd
-
+            log(g_logger.info, "DSR " + repr(dsr))
+            log(g_logger.info, "CTS " + repr(cts))
+            log(g_logger.info, "DCD " + repr(dcd))
+            log(g_logger.info,"debounce: %s did not match %s" % (newsignals,signals))       
             if dcd:
                 #
                 # test result takes precedence over rig signalling
@@ -144,13 +172,13 @@ def wait_for_qso_start(ser):
                 # HACK - bogus response
                 # wait until we get just dsr or cts; dcd for debug
                 #
-                print "dsr and cts set, bogus response, re-arm"
+                log(g_logger.info, "dsr and cts set, bogus response, re-arm")
             elif (not dsr) and (not cts):
                 #
                 # HACK - bogus response
                 # wait until we get just dsr or cts; dcd for debug
                 #
-                print "dsr and cts clear, bogus response, re-arm"
+                log(g_logger.info,"dsr and cts clear, bogus response, re-arm")
             else:
                 #
                 # either dsr or cts is active - a qso is
@@ -158,7 +186,7 @@ def wait_for_qso_start(ser):
                 #
                 break
         else:
-            print "debounce: %s did not match %s" % (newsignals,signals)
+            log(g_logger.info,"debounce: %s did not match %s" % (newsignals,signals))
         
     result = None
     
@@ -183,13 +211,13 @@ def wait_for_inactivity(ser):
     wait_for_qso_stop(ser)
 
 def wait_for_qso_stop(ser):
-    print "wait for qso stop"
+    log(g_logger.info, "wait for qso stop")
     global g_wait_signals
     ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
-    print "DSR",ser.getDSR()
-    print "CTS",ser.getCTS()    
-    print "DCD",ser.getCD()
-    print "QSO stopped"
+    log(g_logger.info, "DSR " + repr(ser.getDSR()))
+    log(g_logger.info, "CTS " + repr(ser.getCTS()))
+    log(g_logger.info, "DCD " + repr(ser.getCD()))
+    log(g_logger.info, "QSO stopped")
     return
 
 def open_result_file(filename, mode="r"):
@@ -238,17 +266,17 @@ def start_record( direction ):
     try:
         f = open(os.path.join(fullpath), "wb")
     except IOError, err:
-        print "IOERROR",err
+        log(g_logger.error, "IOERROR: " + repr(err))
         return
 
     with f:
         try:
             p = subprocess.Popen(['arecord','-fcd','-Dhw:0'], stdout=f, stderr=subprocess.PIPE)
-            print "/usr/bin/chrt -r -p 99 %s" % p.pid
+            log(g_logger.info, "/usr/bin/chrt -r -p 99 %s" % p.pid)
             os.system("/usr/bin/chrt -r -p 99 %s" % p.pid)
         except OSError as e:
-            print e.errno
-            print e
+            log(g_logger.info, e.errno)
+            log(g_logger.info, repr(e))
             return
             
 
@@ -260,17 +288,20 @@ def stop_record(p):
     #p.kill()
 
     status = p.communicate()
-    print "communicate status", status
-
+    log(g_logger.info, "communicate status %s" % repr(status))
 
     retcode = p.wait()
-    print "retcode", retcode
+    log(g_logger.info,"retcode %d" % retcode)
 
     ensure_record_stopped()
 
     return
 
 def main():
+    global g_logger
+
+    g_logger = get_logger()
+
     serport = '/dev/ttyUSB0'
 
     ser = serial.Serial(serport)
@@ -285,7 +316,7 @@ def main():
      # TODO set volume using amixer on boot
 
     if not ser:
-        print >> sys.stderr, "serial port %s not found" % serport
+        log(g_logger.critical,"serial port %s not found" % serport)
         sys.exit(1)
 
     wait_for_inactivity(ser)
@@ -314,11 +345,12 @@ def main():
                 assert ( False )
 
             led.set_state( "on" )
-            print "recording"
-            #wait_for_qso_stop(ser)
+
+            log(g_logger.info, "recording")
+
             qso_stop_thread.join()
 
-            print "stopping recording"
+            log(g_logger.info, "stopping recording")
 
             stop_record(rec_handle)
             led.set_state( "off" )
