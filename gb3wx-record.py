@@ -35,9 +35,11 @@ def get_logger():
 
     log.setLevel(logging.DEBUG)
 
-    handler = logging.handlers.SysLogHandler(address = '/dev/log')
-
-    formatter = logging.Formatter('%(module)s.%(funcName)s: %(message)s')
+    #handler = logging.handlers.SysLogHandler(address = '/dev/log')
+    mb = 1000000
+    fn = "/home/gb3wx/log/gb3wx-record.log"
+    handler = logging.handlers.RotatingFileHandler(fn, maxBytes=mb, backupCount=10)
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     handler.setFormatter(formatter)
 
     log.addHandler(handler)
