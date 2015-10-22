@@ -60,6 +60,8 @@ def get_logger():
 # originally TxD was green, RxD was white
 # 
 def ledtest(ser):
+    log(g_logger.info, "gb3wx-record ledtest")
+
     for i in range(5):
         time.sleep(1)
         ser.setDTR(True)
@@ -303,6 +305,8 @@ def main():
     global g_logger
 
     g_logger = get_logger()
+
+    log(g_logger.info, "gb3wx-record startup")
 
     serport = '/dev/ttyUSB0'
 
