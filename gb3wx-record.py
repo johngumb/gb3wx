@@ -163,7 +163,7 @@ def wait_for_qso_start(ser):
             log(g_logger.info, "DSR " + repr(dsr))
             log(g_logger.info, "CTS " + repr(cts))
             log(g_logger.info, "DCD " + repr(dcd))
-            log(g_logger.info,"debounce: %s did not match %s" % (newsignals,signals))       
+
             if dcd:
                 #
                 # test result takes precedence over rig signalling
