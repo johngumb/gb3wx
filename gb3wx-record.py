@@ -267,6 +267,8 @@ def start_record( direction ):
     if not os.path.exists(os.path.dirname(fullpath)):
         os.makedirs(os.path.dirname(fullpath))
 
+    log(g_logger.info, "recording %s" % fullpath)
+
     try:
         f = open(os.path.join(fullpath), "wb")
     except IOError, err:
