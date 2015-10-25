@@ -46,7 +46,21 @@ def get_logger():
 
     return log
 
+def get_ofcom_logger():
+    log = logging.getLogger("gb3wx")
 
+    log.setLevel(logging.INFO)
+
+    fn = "/home/gb3wx/log/gb3wx-activity.log"
+    handler = logging.handlers.TimedRotatingFileHandler(fn, when = 'd', interval = 1, backupCount=300)
+
+    formatter = logging.Formatter('%(asctime)s %(message)s')
+
+    handler.setFormatter(formatter)
+
+    log.addHandler(handler)
+
+    return log
 #
 # (modified) USB serial pinout
 #
@@ -308,6 +322,8 @@ def main():
 
     g_logger = get_logger()
 
+    ofcom_logger = get_ofcom_logger()
+
     log(g_logger.info, "gb3wx-record startup")
 
     serport = '/dev/ttyUSB0'
@@ -328,6 +344,8 @@ def main():
         sys.exit(1)
 
     wait_for_inactivity(ser)
+
+    ofcom_logger.info("System start")
 
     #
     # TODO write a file per day which provides a summary of activity
@@ -356,11 +374,16 @@ def main():
 
             log(g_logger.info, "recording")
 
+            ofcom_logger.info("activity start " + mode)
+
             qso_stop_thread.join()
+
+            ofcom_logger.info("activity stop " + mode)
 
             log(g_logger.info, "stopping recording")
 
             stop_record(rec_handle)
+
             led.set_state( "off" )
 
 if __name__ == "__main__":
