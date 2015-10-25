@@ -116,7 +116,7 @@ fi
 #
 # set beacon time
 #
-let beaconmins=10
+let beaconmins=5
 let beaconsecs=${beaconmins}*60
 let bt=${beaconsecs}/10
 send_dtmf *302${bt} "ID Timer transmitter 1 ${beaconsecs} seconds"
@@ -159,8 +159,8 @@ send_dtmf \*31412
 #
 send_dtmf \*10 "Save settings as default (group 0)"
 
-# 0.5 second hang timer
-send_dtmf *3015
+# 0.6 second hang timer
+send_dtmf *3016
 
 #
 # load power up settings

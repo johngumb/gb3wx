@@ -1,0 +1,8 @@
+# set beacon time
+. ./send_dtmf.sh
+
+let beaconmins=5
+let beaconsecs=${beaconmins}*60
+let bt=${beaconsecs}/10
+send_dtmf *302${bt} "ID Timer transmitter 1 ${beaconsecs} seconds"
+send_dtmf *303${bt} "ID Timer transmitter 2 ${beaconsecs} seconds"
