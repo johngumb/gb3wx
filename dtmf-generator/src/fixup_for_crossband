@@ -159,8 +159,8 @@ send_dtmf \*31412
 #
 send_dtmf \*10 "Save settings as default (group 0)"
 
-# 1 second hang timer
-send_dtmf *030110
+# 0.5 second hang timer
+send_dtmf *3015
 
 #
 # load power up settings
