@@ -320,6 +320,9 @@ def stop_record(p):
 def main():
     global g_logger
 
+    # 180 seconds max allowed time for an over
+    NHRC_TIMEOUT = 180
+
     g_logger = get_logger()
 
     ofcom_logger = get_ofcom_logger()
@@ -376,13 +379,17 @@ def main():
 
             ofcom_logger.info("activity start " + mode)
 
-            qso_stop_thread.join()
+            qso_stop_thread.join(timeout=NHRC_TIMEOUT+5)
 
-            ofcom_logger.info("activity stop " + mode)
-
-            log(g_logger.info, "stopping recording")
+            if qso_stop_thread.isAlive():
+                log(g_logger.info, "transmit timeout - missed QSO stop")
+                ofcom_logger.info("transmit timeout - missed QSO stop " + mode)
+            else:
+                ofcom_logger.info("activity stop " + mode)
 
             stop_record(rec_handle)
+
+            log(g_logger.info, "stopping recording")
 
             led.set_state( "off" )
 
