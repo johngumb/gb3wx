@@ -175,7 +175,7 @@ def wait_for_qso_start(ser):
 
         time.sleep(g_debounce_time)
 
-        newsignals = get_qso_signals(ser, "after debounce ")
+        newsignals = get_qso_signals(ser, "after  debounce")
 
         test = False
 
