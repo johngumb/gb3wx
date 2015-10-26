@@ -232,14 +232,13 @@ def wait_for_inactivity(ser):
 
     wait_for_qso_stop(ser)
 
-def wait_for_qso_stop(ser):
-    log(g_logger.info, "wait for qso stop")
+def wait_for_qso_stop(ser, loop):
+    log(g_logger.info, "wait for qso stop loop %d" % loop)
     global g_wait_signals
     ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
 
-    get_qso_signals(ser, "wait for qso stop")
+    get_qso_signals(ser, "wait for qso stop loop %d" % loop)
 
-    log(g_logger.info, "QSO stopped")
     return
 
 def open_result_file(filename, mode="r"):
@@ -360,14 +359,17 @@ def main():
     # TODO write a file per day which provides a summary of activity
     # eg. total minutes active 10/6 and 6/10
     #
+    loop = 0
     while True:
+
+        loop += 1
 
         mode = wait_for_qso_start(ser)
 
         if mode == "test":
             ledtest(ser)
         else:
-            qso_stop_thread = threading.Thread(target=wait_for_qso_stop,args=(ser,))
+            qso_stop_thread = threading.Thread(target=wait_for_qso_stop,args=(ser,loop))
             qso_stop_thread.start()
 
             rec_handle = start_record(mode)
@@ -391,6 +393,7 @@ def main():
                 log(g_logger.info, "transmit timeout - missed QSO stop")
                 ofcom_logger.info("transmit timeout - missed QSO stop " + mode)
             else:
+                log(g_logger.info, "QSO stopped")
                 ofcom_logger.info("activity stop " + mode)
 
             stop_record(rec_handle)
