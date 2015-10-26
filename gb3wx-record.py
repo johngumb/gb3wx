@@ -133,11 +133,13 @@ g_qso_signals={}
 
 def get_qso_signals(ser, reason):
     global g_qso_signals
+    s = g_qso_signals
+    keys = ["DSR", "CTS", "DCD"]
 
-    result = [ f() for f in g_qso_signals.values() ]
+    result = [ s[sig]() for sig in keys ]
 
     msg = "get_qso_signals: %s " % reason
-    for (sig,val) in zip(g_qso_signals.keys(), result):
+    for (sig,val) in zip(keys, result):
         msg += "%s %s " % (sig, repr(val))
 
     log(g_logger.info, msg.strip())
