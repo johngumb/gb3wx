@@ -164,14 +164,15 @@ def wait_for_qso_start(ser):
         # if not then wait for change
         #
         if dsr == cts and (not dcd):
-		ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
-
-        (dsr, cts, dcd) = get_qso_signals(ser, "change detected")
+            log(g_logger.info, "waiting for activity")
+            ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
+        else:
+            log(g_logger.info,"activity already happening")
 
         #
         # debounce
         #
-        signals = get_qso_signals(ser, "before debounce")
+        signals = get_qso_signals(ser, "activity detected")
 
         time.sleep(g_debounce_time)
 
