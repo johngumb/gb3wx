@@ -178,8 +178,6 @@ def wait_for_qso_start(ser):
 
         newsignals = get_qso_signals(ser, "after  debounce")
 
-        test = False
-
         if newsignals == signals:
             (dsr, cts, dcd) = signals
 
@@ -187,7 +185,6 @@ def wait_for_qso_start(ser):
                 #
                 # test result takes precedence over rig signalling
                 #
-                test = True
                 break
 
             elif dsr and cts:
@@ -216,10 +213,10 @@ def wait_for_qso_start(ser):
     if dsr:
         result = "6_10"
 
-    if cts:
+    elif cts:
         result = "10_6"
 
-    if test:
+    elif dcd:
         result = "test"
 
     return result
