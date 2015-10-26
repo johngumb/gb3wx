@@ -305,13 +305,12 @@ def start_record( direction ):
 def stop_record(p):
 
     p.terminate()
-    #p.kill()
 
     status = p.communicate()
-    log(g_logger.info, "communicate status %s" % repr(status))
+    log(g_logger.info, "stop record communicate status %s" % repr(status))
 
     retcode = p.wait()
-    log(g_logger.info,"retcode %d" % retcode)
+    log(g_logger.info,"stop record retcode %d" % retcode)
 
     ensure_record_stopped()
 
@@ -388,8 +387,6 @@ def main():
                 ofcom_logger.info("activity stop " + mode)
 
             stop_record(rec_handle)
-
-            log(g_logger.info, "stopping recording")
 
             led.set_state( "off" )
 
