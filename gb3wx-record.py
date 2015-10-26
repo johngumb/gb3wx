@@ -128,11 +128,21 @@ class LED:
 global g_wait_signals
 g_wait_signals = (TIOCM_DSR | TIOCM_CTS | TIOCM_CD)
 
-def get_qso_signals(ser):
-    dsr = ser.getDSR()
-    cts = ser.getCTS()
-    dcd = ser.getCD()
-    return (dsr, cts, dcd)
+global g_qso_signals
+g_qso_signals={}
+
+def get_qso_signals(ser, reason):
+    global g_qso_signals
+
+    result = [ f() for f in g_qso_signals.values() ]
+
+    msg = "get_qso_signals: %s " % reason
+    for (sig,val) in zip(g_qso_signals.keys(), result):
+        msg += "%s %s " % (sig, repr(val))
+
+    log(g_logger.info, msg.strip())
+
+    return result
 
 def wait_for_qso_start(ser):
     log(g_logger.info, "wait for qso start")
@@ -145,7 +155,7 @@ def wait_for_qso_start(ser):
     #
     while True:
 
-        (dsr, cts, dcd) = get_qso_signals(ser)
+        (dsr, cts, dcd) = get_qso_signals(ser, "start loop")
 
         #
         # qso happening already? (dsr XOR cts)
@@ -154,29 +164,21 @@ def wait_for_qso_start(ser):
         if dsr == cts and (not dcd):
 		ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
 
-        (dsr, cts, dcd) = get_qso_signals(ser)
-        log(g_logger.info, "DSR " + repr(dsr))
-        log(g_logger.info, "CTS " + repr(cts))
-        log(g_logger.info, "DCD " + repr(dcd))
-        log(g_logger.info, "wait_for_qso_start: change detected")
+        (dsr, cts, dcd) = get_qso_signals(ser, "change detected")
 
         #
         # debounce
         #
-        signals = get_qso_signals(ser)
+        signals = get_qso_signals(ser, "before debounce")
 
         time.sleep(g_debounce_time)
 
-        newsignals = get_qso_signals(ser)
+        newsignals = get_qso_signals(ser, "after debounce ")
 
         test = False
 
         if newsignals == signals:
             (dsr, cts, dcd) = signals
-
-            log(g_logger.info, "DSR " + repr(dsr))
-            log(g_logger.info, "CTS " + repr(cts))
-            log(g_logger.info, "DCD " + repr(dcd))
 
             if dcd:
                 #
@@ -232,9 +234,9 @@ def wait_for_qso_stop(ser):
     log(g_logger.info, "wait for qso stop")
     global g_wait_signals
     ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
-    log(g_logger.info, "DSR " + repr(ser.getDSR()))
-    log(g_logger.info, "CTS " + repr(ser.getCTS()))
-    log(g_logger.info, "DCD " + repr(ser.getCD()))
+
+    get_qso_signals(ser, "wait for qso stop")
+
     log(g_logger.info, "QSO stopped")
     return
 
@@ -348,6 +350,9 @@ def main():
     wait_for_inactivity(ser)
 
     ofcom_logger.info("System start")
+
+    for (sig,fn) in zip([ "DSR", "CTS", "DCD" ], [ser.getDSR, ser.getCTS, ser.getCD]):
+        g_qso_signals[sig] = fn
 
     #
     # TODO write a file per day which provides a summary of activity
