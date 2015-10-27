@@ -5,7 +5,7 @@ SUDO=""
 AMIXER=/usr/bin/amixer
 
 # enable line input
-${SUDO} ${AMIXER} -D${DEV} sset Line 128 cap on
+${SUDO} ${AMIXER} -D${DEV} sset Line 102 cap on
 
 # disable mic input
 ${SUDO} ${AMIXER} -D${DEV} sset Mic 0 off
