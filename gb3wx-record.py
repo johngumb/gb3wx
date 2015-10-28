@@ -184,7 +184,7 @@ def wait_for_qso_start(ser):
             newsignals = get_qso_signals(ser, "stability check")
             if signals != newsignals:
                 unstable += 1
-
+            time.sleep(g_debounce_time)
         #
         # check for stability
         #
