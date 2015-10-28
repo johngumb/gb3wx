@@ -19,7 +19,7 @@ import logging.handlers
 global g_logger
 
 global g_debounce_time
-g_debounce_time=0.5 # seconds
+g_debounce_time=0.05 # seconds
 
 def log(logger, msg):
     do_print = False
@@ -37,7 +37,8 @@ def get_logger():
 
     #handler = logging.handlers.SysLogHandler(address = '/dev/log')
     mb = 1000000
-    fn = "/home/gb3wx/log/gb3wx-record.log"
+
+    fn = os.path.join(os.path.expanduser("~"),"log/gb3wx-record.log")
     handler = logging.handlers.RotatingFileHandler(fn, maxBytes=mb, backupCount=10)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     handler.setFormatter(formatter)
@@ -51,7 +52,8 @@ def get_ofcom_logger():
 
     log.setLevel(logging.INFO)
 
-    fn = "/home/gb3wx/log/gb3wx-activity.log"
+    fn = os.path.join(os.path.expanduser("~"),"log/gb3wx-activity.log")
+
     handler = logging.handlers.TimedRotatingFileHandler(fn, when = 'd', interval = 1, backupCount=300)
 
     formatter = logging.Formatter('%(asctime)s %(message)s')
@@ -76,11 +78,11 @@ def get_ofcom_logger():
 def ledtest(ser):
     log(g_logger.info, "gb3wx-record ledtest")
 
-    for i in range(5):
-        time.sleep(1)
+    for i in range(20):
+        time.sleep(0.5)
         ser.setDTR(True)
         ser.setRTS(False)
-        time.sleep(1)
+        time.sleep(0.5)
         ser.setDTR(False)
         ser.setRTS(True)
     #
@@ -174,39 +176,52 @@ def wait_for_qso_start(ser):
         #
         signals = get_qso_signals(ser, "activity detected")
 
-        time.sleep(g_debounce_time)
+        #
+        # sample signals
+        #
+        unstable = 0
+        for i in range(10):
+            newsignals = get_qso_signals(ser, "stability check")
+            if signals != newsignals:
+                unstable += 1
 
-        newsignals = get_qso_signals(ser, "after  debounce")
-
-        if newsignals == signals:
-            (dsr, cts, dcd) = signals
-
-            if dcd:
-                #
-                # test result takes precedence over rig signalling
-                #
-                break
-
-            elif dsr and cts:
-                #
-                # HACK - bogus response
-                # wait until we get just dsr or cts; dcd for debug
-                #
-                log(g_logger.info, "dsr and cts set, bogus response, re-arm")
-            elif (not dsr) and (not cts):
-                #
-                # HACK - bogus response
-                # wait until we get just dsr or cts; dcd for debug
-                #
-                log(g_logger.info,"dsr and cts clear, bogus response, re-arm")
-            else:
-                #
-                # either dsr or cts is active - a qso is
-                # happening one way or the other
-                #
-                break
+        #
+        # check for stability
+        #
+        if unstable != 0:
+            log(g_logger.info,"qso signals did not stabilise: %d values" % unstable)
         else:
-            log(g_logger.info,"debounce: %s did not match %s" % (newsignals,signals))
+            newsignals = get_qso_signals(ser, "after  debounce")
+
+            if newsignals == signals:
+                (dsr, cts, dcd) = signals
+
+                if dcd:
+                    #
+                    # test result takes precedence over rig signalling
+                    #
+                    break
+
+                elif dsr and cts:
+                    #
+                    # HACK - bogus response
+                    # wait until we get just dsr or cts; dcd for debug
+                    #
+                    log(g_logger.info, "dsr and cts set, bogus response, re-arm")
+                elif (not dsr) and (not cts):
+                    #
+                    # HACK - bogus response
+                    # wait until we get just dsr or cts; dcd for debug
+                    #
+                    log(g_logger.info,"dsr and cts clear, bogus response, re-arm")
+                else:
+                    #
+                    # either dsr or cts is active - a qso is
+                    # happening one way or the other
+                    #
+                    break
+            else:
+                log(g_logger.info,"debounce: %s did not match %s" % (newsignals,signals))
         
     result = None
     
@@ -258,7 +273,7 @@ def dstdir_fname():
 
     t = datetime.datetime.utcnow()
 
-    dstdirname = "%04d_%02d" % ( t.year, t.month)
+    dstdirname = "%04d_%02d" % ( t.year, t.month )
 
     fname = dstdirname + "_" + "%02d_%02d_%02d_%02d" % (t.day, t.hour, t.minute, t.second)
     return (dstdirname, fname)
@@ -317,6 +332,30 @@ def stop_record(p):
 
     return
 
+def play_last_recording():
+    (dstdir_dirname,_) = dstdir_fname()
+
+    fq_dstdir_dirname = os.path.join(data_dir(), dstdir_dirname)
+
+    mtime = lambda f: os.stat(os.path.join(fq_dstdir_dirname, f)).st_mtime
+
+    play_fn=list(sorted(os.listdir(fq_dstdir_dirname), key=mtime))[0]
+
+    full_play_fn = os.path.join(fq_dstdir_dirname, play_fn)
+
+    play_ext = play_fn.split('.')[1]
+
+    if play_ext == "mp3":
+        playcmd = "lame --silent --decode %s - | aplay -Fcd 2>/dev/null" % full_play_fn
+    elif play_exit == "wav":
+        playcmd = "aplay -Fcd %s 2>/dev/null" % full_play_fn
+
+    log(g_logger.info, "play last recording: %s" % playcmd)
+
+    os.system(playcmd)
+
+    return
+
 def main():
     global g_logger
 
@@ -353,10 +392,6 @@ def main():
     for (sig,fn) in zip([ "DSR", "CTS", "DCD" ], [ser.getDSR, ser.getCTS, ser.getCD]):
         g_qso_signals[sig] = fn
 
-    #
-    # TODO write a file per day which provides a summary of activity
-    # eg. total minutes active 10/6 and 6/10
-    #
     loop = 0
     while True:
 
@@ -365,7 +400,12 @@ def main():
         mode = wait_for_qso_start(ser)
 
         if mode == "test":
-            ledtest(ser)
+            ledtest_thread = threading.Thread(target=ledtest,args=(ser,))
+            ledtest_thread.start()
+
+            play_last_recording()
+
+            ledtest_thread.join()
         else:
             qso_stop_thread = threading.Thread(target=wait_for_qso_stop,args=(ser,loop))
             qso_stop_thread.start()
