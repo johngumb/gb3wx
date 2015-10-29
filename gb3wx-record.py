@@ -194,7 +194,7 @@ def wait_for_qso_start(ser):
             # wait for inactivity
             #
             count = 0
-            while True and count < 1000:
+            while count < 1000:
                 stopsignals = get_qso_signals(ser, "stability inactivity check")
                 if stopsignals == [False, False, False]:
                     log(g_logger.info,"stability inactivity check passed attempt %d" % count)
