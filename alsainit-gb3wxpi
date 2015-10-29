@@ -5,12 +5,15 @@ SUDO=""
 AMIXER=/usr/bin/amixer
 
 # enable line input
-${SUDO} ${AMIXER} -D${DEV} sset Line 102 cap on
+${SUDO} ${AMIXER} -D${DEV} sset Line capture volume 88 cap
+
+#no line playback
+${SUDO} ${AMIXER} -D${DEV} sset Line playback volume 80 off
 
 # disable mic input
 ${SUDO} ${AMIXER} -D${DEV} sset Mic 0 off
 
-# playback to controller for testing purposes
-${SUDO} ${AMIXER} -D${DEV} sset Line 128
-
 ${SUDO} ${AMIXER} -D${DEV} sset 'Digital In' off
+
+# playback for testing purposes
+${SUDO} ${AMIXER} sset Master Playback Volume 150
