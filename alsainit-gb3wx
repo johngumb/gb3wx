@@ -8,18 +8,13 @@ AMIXER=/usr/bin/amixer
 #${SUDO} ${AMIXER} -D${DEV} sset Capture 9 cap on
 #${SUDO} ${AMIXER} -D${DEV} sset Mic 100 cap on
 
-DEV=hw:1
-
-# enable line input
-${SUDO} ${AMIXER} -D${DEV} sset Line 128 cap on
-
 # disable mic input
 ${SUDO} ${AMIXER} -D${DEV} sset Mic 0 off
 
 # playback to controller for testing purposes
-${SUDO} ${AMIXER} -D${DEV} sset Line 128
-
-${SUDO} ${AMIXER} -D${DEV} sset 'PCM Capture Source' Line
+#${SUDO} ${AMIXER} -D${DEV} sset Line 128
+${SUDO} ${AMIXER} -D${DEV} sset Line capture volume 80 cap
+${SUDO} ${AMIXER} -D${DEV} sset Line playback volume 80 off
 
 #${SUDO} ${AMIXER} -D${DEV} sset 'Digital In' off
 

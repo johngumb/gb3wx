@@ -78,7 +78,7 @@ def get_ofcom_logger():
 def ledtest(ser):
     log(g_logger.info, "gb3wx-record ledtest")
 
-    for i in range(20):
+    for i in range(5):
         time.sleep(0.5)
         ser.setDTR(True)
         ser.setRTS(False)
@@ -357,9 +357,9 @@ def play_last_recording():
     play_ext = play_fn.split('.')[1]
 
     if play_ext == "mp3":
-        playcmd = "lame --silent --decode %s - | aplay -Fcd 2>/dev/null" % full_play_fn
+        playcmd = "/usr/local/bin/lame --silent --decode %s - | /usr/bin/aplay -Fcd -Dplughw:0 2>/dev/null" % full_play_fn
     elif play_exit == "wav":
-        playcmd = "aplay -Fcd %s 2>/dev/null" % full_play_fn
+        playcmd = "/usr/bin/aplay -Fcd -Dplughw:0 %s 2>/dev/null" % full_play_fn
 
     log(g_logger.info, "play last recording: %s" % playcmd)
 
