@@ -190,6 +190,17 @@ def wait_for_qso_start(ser):
         #
         if unstable != 0:
             log(g_logger.info,"qso signals did not stabilise: %d values" % unstable)
+            #
+            # wait for inactivity
+            #
+            count = 0
+            while True and count < 1000:
+                stopsignals = get_qso_signals(ser, "stability inactivity check")
+                if stopsignals == [False, False, False]:
+                    log(g_logger.info,"stability inactivity check passed attempt %d" % count)
+                    break
+                time.sleep(g_debounce_time)
+                count += 1
         else:
             newsignals = get_qso_signals(ser, "after  debounce")
 
