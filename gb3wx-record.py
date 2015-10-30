@@ -350,7 +350,7 @@ def play_last_recording():
 
     mtime = lambda f: os.stat(os.path.join(fq_dstdir_dirname, f)).st_mtime
 
-    play_fn=list(sorted(os.listdir(fq_dstdir_dirname), key=mtime))[0]
+    play_fn=list(sorted(os.listdir(fq_dstdir_dirname), key=mtime))[-1]
 
     full_play_fn = os.path.join(fq_dstdir_dirname, play_fn)
 
