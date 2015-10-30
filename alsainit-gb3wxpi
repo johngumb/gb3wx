@@ -5,7 +5,7 @@ SUDO=""
 AMIXER=/usr/bin/amixer
 
 # enable line input
-${SUDO} ${AMIXER} -D${DEV} sset Line capture volume 88 cap
+${SUDO} ${AMIXER} -D${DEV} sset Line capture volume 86 cap
 
 #no line playback
 ${SUDO} ${AMIXER} -D${DEV} sset Line playback volume 80 off
