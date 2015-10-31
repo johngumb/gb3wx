@@ -400,6 +400,9 @@ def main():
 
     ofcom_logger.info("System start")
 
+    # show we've started
+    ledtest(ser)
+
     for (sig,fn) in zip([ "DSR", "CTS", "DCD" ], [ser.getDSR, ser.getCTS, ser.getCD]):
         g_qso_signals[sig] = fn
 
