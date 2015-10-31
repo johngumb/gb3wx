@@ -186,9 +186,9 @@ def wait_for_qso_start(ser):
                 unstable += 1
             time.sleep(g_debounce_time)
         #
-        # check for stability
+        # check for stability - skip this for the test button
         #
-        if unstable != 0:
+        if (unstable != 0) and (not dcd):
             log(g_logger.info,"qso signals did not stabilise: %d values" % unstable)
             #
             # wait for inactivity
