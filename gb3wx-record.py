@@ -180,7 +180,7 @@ def wait_for_qso_start(ser):
         # sample signals
         #
         unstable = 0
-        for i in range(10):
+        for i in range(5):
             newsignals = get_qso_signals(ser, "stability check")
             if signals != newsignals:
                 unstable += 1
@@ -188,7 +188,7 @@ def wait_for_qso_start(ser):
         #
         # check for stability - skip this for the test button
         #
-        if (unstable != 0) and (not dcd):
+        if (unstable > 1) and (not dcd):
             log(g_logger.info,"qso signals did not stabilise: %d values" % unstable)
             #
             # wait for inactivity
