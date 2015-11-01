@@ -358,7 +358,7 @@ def play_last_recording():
 
     if play_ext == "mp3":
         playcmd = "/usr/local/bin/lame --silent --decode %s - | /usr/bin/aplay -Fcd -Dplughw:0 2>/dev/null" % full_play_fn
-    elif play_exit == "wav":
+    elif play_ext == "wav":
         playcmd = "/usr/bin/aplay -Fcd -Dplughw:0 %s 2>/dev/null" % full_play_fn
 
     log(g_logger.info, "play last recording: %s" % playcmd)
