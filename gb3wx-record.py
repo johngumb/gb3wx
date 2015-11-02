@@ -54,7 +54,7 @@ def get_ofcom_logger():
 
     fn = os.path.join(os.path.expanduser("~"),"log/gb3wx-activity.log")
 
-    handler = logging.handlers.TimedRotatingFileHandler(fn, when = 'd', interval = 1, backupCount=300)
+    handler = logging.handlers.TimedRotatingFileHandler(fn, when = 'w6', interval = 1, backupCount=100)
 
     formatter = logging.Formatter('%(asctime)s %(message)s')
 
