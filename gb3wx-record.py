@@ -384,6 +384,15 @@ def play_last_recording():
 
     return
 
+def sysuptime():
+    from datetime import timedelta
+
+    with open('/proc/uptime', 'r') as f:
+        uptime_seconds = float(f.readline().split()[0])
+        uptime_string = str(timedelta(seconds = uptime_seconds))
+
+    return uptime_string
+
 def main():
     global g_logger
 
@@ -394,7 +403,7 @@ def main():
 
     ofcom_logger = get_ofcom_logger()
 
-    log(g_logger.info, "gb3wx-record startup")
+    log(g_logger.info, "gb3wx-record startup, sysuptime " + sysuptime())
 
     serport = '/dev/ttyUSB0'
 
