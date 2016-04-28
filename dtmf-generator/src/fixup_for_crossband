@@ -163,6 +163,13 @@ send_dtmf \*10 "Save settings as default (group 0)"
 send_dtmf *3016
 
 #
+# page 44 group 6 switches
+# control receiver confirms to transmitter 2
+# transmitter 2 is 6 metres
+#
+send_dtmf *0651
+
+#
 # load power up settings
 #
 send_dtmf \*\* "Load power up settings"
