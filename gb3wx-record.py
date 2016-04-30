@@ -76,7 +76,7 @@ def get_ofcom_logger():
 # originally TxD was green, RxD was white
 # 
 def ledpattern(ser, cycles, msg):
-    log(g_logger.info, "%s ledpattern" % msg)
+    log(g_logger.info, "%s led pattern" % msg)
 
     for i in range(cycles):
         time.sleep(0.5)
@@ -147,7 +147,7 @@ class Watchdog(threading.Thread):
             timediff = datetime.datetime.now() - self.m_last_activity
 
             if timediff.seconds < 600:
-                log(g_logger.info, "watchdog secs %d" % timediff.seconds)
+                pass
             else:
                 if not self.m_qso_active:
                     self.rebootcontroller()
@@ -230,7 +230,7 @@ def wait_for_qso_start(ser):
         # qso happening already? (dsr XOR cts)
         # if not then wait for change
         #
-        if dsr == cts and (not dcd):
+        if dsr == cts:
             log(g_logger.info, "waiting for activity")
             ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
         else:
