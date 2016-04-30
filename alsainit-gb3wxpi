@@ -15,7 +15,7 @@ ${SUDO} ${AMIXER} -D${DEV} sset Mic 0 off
 
 ${SUDO} ${AMIXER} -D${DEV} sset 'Digital In' off
 
-${SUDO} ${AMIXER} -D${DEV} sset Mic capture volume 2
+${SUDO} ${AMIXER} -D${DEV} sset Mic capture volume 1
 ${SUDO} ${AMIXER} -D${DEV} sset 'Mic Boost' off
 
 # playback for testing purposes
