@@ -13,15 +13,31 @@ keepflag="/tmp/keeptunnel"
 # localhost here refers to localhost on the machine this script
 # is running on
 #
+tunnelpid()
+{
+    local pid
+
+    pid=$(ps aux | grep ssh | grep ${remport} | awk '{print $2}')
+    if [ -n "${pid}" ]; then
+        echo ${pid}
+    fi
+}
+
 start()
 {
-    /usr/bin/ssh -p ${fwport} -R ${remport}:localhost:22 ${user}@${home} -nNT -f
+    if [ -z "$(tunnelpid)" ]; then
+        /usr/bin/ssh -p ${fwport} -R ${remport}:localhost:22 ${user}@${home} -nNT -f
+    fi
 }
 
 stop()
 {
+    local pid
+
     if [ ! -f ${keepflag} ]; then
-        pid=$(ps aux | grep ssh | grep ${remport} | awk '{print $2}')
+
+        pid=$(tunnelpid)
+
         if [ -n "${pid}" ]; then
             kill ${pid}
         fi
