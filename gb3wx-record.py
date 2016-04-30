@@ -186,9 +186,9 @@ def wait_for_qso_start(ser):
                 unstable += 1
             time.sleep(g_debounce_time)
         #
-        # check for stability - skip this for the test button
+        # check for stability
         #
-        if (unstable > 1) and (not dcd):
+        if unstable > 1:
             log(g_logger.info,"qso signals did not stabilise: %d values" % unstable)
             #
             # wait for inactivity
@@ -209,7 +209,7 @@ def wait_for_qso_start(ser):
 
                 if dcd:
                     #
-                    # test result takes precedence over rig signalling
+                    # tx active on both rigs (both beaconing)
                     #
                     break
 
@@ -243,7 +243,7 @@ def wait_for_qso_start(ser):
         result = "10_6"
 
     elif dcd:
-        result = "test"
+        result = "beacon"
 
     return result
 
@@ -439,11 +439,10 @@ def main():
 
         mode = wait_for_qso_start(ser)
 
-        if mode == "test":
+        if mode == "beacon":
+            log(g_logger.info, "beaconing")
             ledtest_thread = threading.Thread(target=ledtest,args=(ser,))
             ledtest_thread.start()
-
-            play_last_recording()
 
             ledtest_thread.join()
         else:
