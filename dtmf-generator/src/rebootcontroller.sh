@@ -1,4 +1,7 @@
+#!/bin/bash
+
 . ./send_dtmf.sh
+
 echo $0
 echo $(dirname $0)
 ACFILE=$(dirname $0)/access
