@@ -75,10 +75,10 @@ def get_ofcom_logger():
 #
 # originally TxD was green, RxD was white
 # 
-def ledtest(ser):
-    log(g_logger.info, "gb3wx-record ledtest")
+def ledpattern(ser, cycles, msg):
+    log(g_logger.info, "%s ledpattern" % msg)
 
-    for i in range(5):
+    for i in range(cycles):
         time.sleep(0.5)
         ser.setDTR(True)
         ser.setRTS(False)
@@ -494,7 +494,7 @@ def main():
     ofcom_logger.info("System start")
 
     # show we've started
-    ledtest(ser)
+    ledpattern(ser,5,"startup")
 
     for (sig,fn) in zip([ "DSR", "CTS", "DCD" ], [ser.getDSR, ser.getCTS, ser.getCD]):
         g_qso_signals[sig] = fn
@@ -508,7 +508,7 @@ def main():
 
         if mode == "bothtx":
             log(g_logger.info, "both tx")
-            ledtest_thread = threading.Thread(target=ledtest,args=(ser,))
+            ledtest_thread = threading.Thread(target=ledpattern,args=(ser,2,"beacon"))
             ledtest_thread.start()
 
             ledtest_thread.join()
