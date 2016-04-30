@@ -102,7 +102,6 @@ class Watchdog(threading.Thread):
     # TODO synchronise properly
     def activity(self):
         global g_logger
-        log(g_logger.info, "watchdog activity detected")
 
         self.m_last_activity = datetime.datetime.now()
 
@@ -111,17 +110,17 @@ class Watchdog(threading.Thread):
     # TODO synchronise properly
     def qso_active(self):
         global g_logger
-        log(g_logger.info, "watchdog qso started")
 
         self.m_qso_active = True
+
         return
 
     # TODO synchronise properly
     def qso_stopped(self):
         global g_logger
-        log(g_logger.info, "watchdog qso stopped")
 
         self.m_qso_active = False
+
         return
 
     def rebootcontroller(self):
@@ -504,7 +503,6 @@ def main():
         mode = wait_for_qso_start(ser)
 
         if mode == "bothtx":
-            log(g_logger.info, "both tx")
             ledtest_thread = threading.Thread(target=ledpattern,args=(ser,2,"beacon"))
             ledtest_thread.start()
 
