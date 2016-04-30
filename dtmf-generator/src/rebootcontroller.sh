@@ -15,3 +15,4 @@ fi
 send_dtmf ${ACCESS}
 send_dtmf \*\*
 send_dtmf \#
+send_dtmf \#
