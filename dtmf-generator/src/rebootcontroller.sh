@@ -9,6 +9,6 @@ else
    exit 1
 fi
 
-send_dtmf 2730
+send_dtmf ${ACCESS}
 send_dtmf \*\*
 send_dtmf \#
