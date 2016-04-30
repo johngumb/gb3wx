@@ -129,7 +129,7 @@ class Watchdog(threading.Thread):
 
         log(g_logger.info, "rebooting controller...")
 
-        p = subprocess.Popen(["./rebootcontroller.sh"], cwd="/home/gb3wx/gb3wx/dtmf-generator/src", shell=True)
+        p = subprocess.Popen(["./rebootcontroller.sh"], cwd="/home/gb3wx/gb3wx/dtmf-generator/src", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         status = p.communicate()
         log(g_logger.info, "reboot controller communicate status %s" % repr(status))
