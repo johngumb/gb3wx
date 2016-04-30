@@ -279,13 +279,13 @@ def wait_for_qso_start(ser):
                     # HACK - bogus response
                     # wait until we get just dsr or cts; dcd for debug
                     #
-                    log(g_logger.info, "dsr and cts set, bogus response, re-arm")
+                    log(g_logger.info, "dsr and cts set, re-arm")
                 elif (not dsr) and (not cts):
                     #
                     # HACK - bogus response
                     # wait until we get just dsr or cts; dcd for debug
                     #
-                    log(g_logger.info,"dsr and cts clear, bogus response, re-arm")
+                    log(g_logger.info,"dsr and cts clear, re-arm")
                 else:
                     #
                     # either dsr or cts is active - a qso is
