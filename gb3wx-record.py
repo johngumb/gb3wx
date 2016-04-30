@@ -146,11 +146,8 @@ class Watchdog(threading.Thread):
         while True:
             timediff = datetime.datetime.now() - self.m_last_activity
 
-            if timediff.seconds < 600:
-                pass
-            else:
-                if not self.m_qso_active:
-                    self.rebootcontroller()
+            if timediff.seconds > 600 and not self.m_qso_active:
+                self.rebootcontroller()
 
             # TODO don't reboot too frequently
             time.sleep(60)
