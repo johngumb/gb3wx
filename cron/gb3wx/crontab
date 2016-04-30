@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+00 01 * * * /bin/bash /home/gb3wx/gb3wx/process_wavs.sh > /tmp/process_wavs.log 2>&1
+00 06 * * * /bin/bash /home/gb3wx/gb3wx/delete_old_recordings.sh > /tmp/delete_old_recordings.log 2>&1
+16 * * * * /bin/bash /home/gb3wx/gb3wx/remote/daily.sh start
+45 * * * * /bin/bash /home/gb3wx/gb3wx/remote/daily.sh stop
+00 05 * * * cd /home/gb3wx/gb3wx/dtmf-generator/src && /bin/bash ./rebootcontroller.sh
