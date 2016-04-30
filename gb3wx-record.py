@@ -92,6 +92,71 @@ def ledtest(ser):
     ser.setRTS(False)
 
 
+class Watchdog(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__ (self)
+        self.m_last_activity = datetime.datetime.utcnow()
+        self.m_qso_active = False
+        return
+
+    # TODO synchronise properly
+    def activity(self):
+        global g_logger
+        log(g_logger.info, "watchdog activity detected")
+
+        self.m_last_activity = datetime.datetime.now()
+
+        return
+
+    # TODO synchronise properly
+    def qso_active(self):
+        global g_logger
+        log(g_logger.info, "watchdog qso started")
+
+        self.m_qso_active = True
+        return
+
+    # TODO synchronise properly
+    def qso_stopped(self):
+        global g_logger
+        log(g_logger.info, "watchdog qso stopped")
+
+        self.m_qso_active = False
+        return
+
+    def rebootcontroller(self):
+        global g_logger
+
+        log(g_logger.info, "rebooting controller...")
+
+        p = subprocess.Popen(["./rebootcontroller.sh"], cwd="/home/gb3wx/gb3wx/dtmf-generator/src", shell=True)
+
+        status = p.communicate()
+        log(g_logger.info, "reboot controller communicate status %s" % repr(status))
+
+        retcode = p.wait()
+        log(g_logger.info,"reboot controller retcode %d" % retcode)
+
+        return
+
+    def run(self):
+        global g_logger
+        log(g_logger.info, "watchdog started")
+
+        while True:
+            timediff = datetime.datetime.now() - self.m_last_activity
+
+            if timediff.seconds < 600:
+                log(g_logger.info, "watchdog secs %d" % timediff.seconds)
+            else:
+                if not self.m_qso_active:
+                    self.rebootcontroller()
+
+            # TODO don't reboot too frequently
+            time.sleep(60)
+
+        return
+
 class LED:
     def __init__(self, ser, colour):
         self.m_colour = colour
@@ -209,7 +274,7 @@ def wait_for_qso_start(ser):
 
                 if dcd:
                     #
-                    # tx active on both rigs (both beaconing)
+                    # tx active on both rigs
                     #
                     break
 
@@ -243,7 +308,7 @@ def wait_for_qso_start(ser):
         result = "10_6"
 
     elif dcd:
-        result = "beacon"
+        result = "bothtx"
 
     return result
 
@@ -409,14 +474,16 @@ def main():
 
     ser = serial.Serial(serport)
 
+    watchdog = Watchdog()
+
+    watchdog.start()
+
     green_led = LED(ser, "green")
 
     red_led = LED(ser, "red")
 
     green_led.set_state( "off" )
     red_led.set_state( "off" )
-
-     # TODO set volume using amixer on boot
 
     if not ser:
         log(g_logger.critical,"serial port %s not found" % serport)
@@ -439,13 +506,17 @@ def main():
 
         mode = wait_for_qso_start(ser)
 
-        if mode == "beacon":
-            log(g_logger.info, "beaconing")
+        if mode == "bothtx":
+            log(g_logger.info, "both tx")
             ledtest_thread = threading.Thread(target=ledtest,args=(ser,))
             ledtest_thread.start()
 
             ledtest_thread.join()
+
+            watchdog.activity()
         else:
+            watchdog.qso_active()
+
             qso_stop_thread = threading.Thread(target=wait_for_qso_stop,args=(ser,loop))
             qso_stop_thread.start()
 
@@ -476,6 +547,8 @@ def main():
             stop_record(rec_handle)
 
             led.set_state( "off" )
+
+            watchdog.qso_stopped()
 
 if __name__ == "__main__":
     main()
