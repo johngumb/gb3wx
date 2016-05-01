@@ -91,11 +91,10 @@ def ledpattern(ser, cycles, msg):
     ser.setDTR(False)
     ser.setRTS(False)
 
-
 class Watchdog(threading.Thread):
     def __init__(self):
         threading.Thread.__init__ (self)
-        self.m_last_activity = datetime.datetime.utcnow()
+        self.m_last_activity = datetime.datetime.now()
         self.m_qso_active = False
         return
 
@@ -194,7 +193,7 @@ g_wait_signals = (TIOCM_DSR | TIOCM_CTS | TIOCM_CD)
 global g_qso_signals
 g_qso_signals={}
 
-def get_qso_signals(ser, reason):
+def get_qso_signals(ser, reason=""):
     global g_qso_signals
     s = g_qso_signals
     keys = ["DSR", "CTS", "DCD"]
@@ -205,7 +204,8 @@ def get_qso_signals(ser, reason):
     for (sig,val) in zip(keys, result):
         msg += "%s %s " % (sig, repr(val))
 
-    log(g_logger.info, msg.strip())
+    if reason:
+        log(g_logger.info, msg.strip())
 
     return result
 
@@ -324,6 +324,16 @@ def wait_for_qso_stop(ser, loop):
 
     get_qso_signals(ser, "wait for qso stop loop %d" % loop)
 
+    return
+
+def wait_for_beacon_stop(ser, loop, maxwait):
+    log(g_logger.info, "wait for beacon stop loop %d" % loop)
+
+    for i in range((maxwait+5)*5):
+        (dsr, cts, dcd) = get_qso_signals(ser)
+        time.sleep(0.2)
+        if not dcd:
+            break
     return
 
 def open_result_file(filename, mode="r"):
@@ -460,6 +470,13 @@ def main():
     # 180 seconds max allowed time for an over
     NHRC_TIMEOUT = 180
 
+    # seconds minimum before both rigs on tx is classed
+    # as a beacon
+    MIN_BEACON_TIME = 5
+
+    # maximum seconds allowed for a beacon
+    MAX_BEACON_TIME = 30
+
     g_logger = get_logger()
 
     ofcom_logger = get_ofcom_logger()
@@ -506,9 +523,29 @@ def main():
             ledtest_thread = threading.Thread(target=ledpattern,args=(ser,2,"beacon"))
             ledtest_thread.start()
 
-            ledtest_thread.join()
+            beaconstart = datetime.datetime.now()
 
-            watchdog.activity()
+            #
+            # if both rigs are beaconing there's no point
+            # looking for a qso as both are transmitting
+            # so block waiting here for that condition to
+            # clear
+            #
+            beacon_stop_thread = threading.Thread(target=wait_for_beacon_stop,args=(ser, loop, MAX_BEACON_TIME))
+
+            beacon_stop_thread.start()
+
+            beacon_stop_thread.join(timeout=MAX_BEACON_TIME)
+
+            beacon_duration = datetime.datetime.now() - beaconstart
+
+            if beacon_duration.seconds > MIN_BEACON_TIME:
+                log(g_logger.info, "beacon detected: %d seconds" % beacon_duration.seconds)
+                watchdog.activity()
+            elif beacon_duration.seconds >= MAX_BEACON_TIME:
+                log(g_logger.info, "max beacon time exceeded: %d seconds" % beacon_duration.seconds)
+            else:
+                log(g_logger.info, "beacon period too short for a real beacon: %d seconds" % beacon_duration.seconds)
         else:
             watchdog.qso_active()
 
