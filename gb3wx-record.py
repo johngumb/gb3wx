@@ -99,28 +99,16 @@ class Watchdog(threading.Thread):
         self.m_qso_active = False
         return
 
-    # TODO synchronise properly
     def activity(self):
-        global g_logger
-
         self.m_last_activity = datetime.datetime.now()
-
         return
 
-    # TODO synchronise properly
     def qso_active(self):
-        global g_logger
-
         self.m_qso_active = True
-
         return
 
-    # TODO synchronise properly
     def qso_stopped(self):
-        global g_logger
-
         self.m_qso_active = False
-
         return
 
     def rebootcontroller(self):
