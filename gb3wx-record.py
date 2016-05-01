@@ -227,7 +227,7 @@ def wait_for_qso_start(ser):
         # qso happening already? (dsr XOR cts)
         # if not then wait for change
         #
-        if dsr == cts:
+        if dsr == cts and not dcd:
             log(g_logger.info, "waiting for activity")
             ioctl(ser.fd, TIOCMIWAIT, g_wait_signals)
         else:
