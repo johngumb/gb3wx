@@ -340,9 +340,6 @@ def ensure_record_stopped():
     os.system("/usr/bin/pgrep arecord > /dev/null && /usr/bin/killall arecord")
 
 def dstdir_fname():
-    global g_logger
-
-    # TODO set machine timezone to UTC
 
     t = datetime.datetime.utcnow()
 
@@ -351,6 +348,8 @@ def dstdir_fname():
     # horrible hack if ntp hasn't come up
     if t.year==1970:
         log(g_logger.info, "no ntp: %s" % dstdirname )
+
+        # construction competition
         dstdirname = "2015_11"
 
     fname = dstdirname + "_" + "%02d_%02d_%02d_%02d" % (t.day, t.hour, t.minute, t.second)
@@ -411,7 +410,6 @@ def stop_record(p):
     return
 
 def play_last_recording():
-    global g_logger
     (dstdir_dirname,_) = dstdir_fname()
 
     fq_dstdir_dirname = os.path.join(data_dir(), dstdir_dirname)
