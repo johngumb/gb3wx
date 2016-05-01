@@ -75,8 +75,9 @@ def get_ofcom_logger():
 #
 # originally TxD was green, RxD was white
 # 
-def ledpattern(ser, cycles, msg):
-    log(g_logger.info, "%s led pattern" % msg)
+def ledpattern(ser, cycles, msg=""):
+    if msg:
+        log(g_logger.info, "%s led pattern" % msg)
 
     for i in range(cycles):
         time.sleep(0.5)
@@ -520,9 +521,6 @@ def main():
         mode = wait_for_qso_start(ser)
 
         if mode == "bothtx":
-            ledtest_thread = threading.Thread(target=ledpattern,args=(ser,2,"beacon"))
-            ledtest_thread.start()
-
             beaconstart = datetime.datetime.now()
 
             #
@@ -540,6 +538,8 @@ def main():
             beacon_duration = datetime.datetime.now() - beaconstart
 
             if beacon_duration.seconds > MIN_BEACON_TIME:
+                ledtest_thread = threading.Thread(target=ledpattern,args=(ser,2))
+                ledtest_thread.start()
                 log(g_logger.info, "beacon detected: %d seconds" % beacon_duration.seconds)
                 watchdog.activity()
             elif beacon_duration.seconds >= MAX_BEACON_TIME:
