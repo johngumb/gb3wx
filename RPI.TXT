@@ -1,3 +1,4 @@
 rpi-update
-yum -y install pyserial alsa-utils gcc-c++
+cp gb3wx/rc.local /etc
+yum -y install ntp git pyserial alsa-utils gcc-c++ emacs alsa-lib-devel
 
