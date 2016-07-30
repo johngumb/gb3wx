@@ -1,6 +1,6 @@
 #!/bin/bash
 # init of soundblaster soundcard on r-pi
-DEV=hw:1
+DEV=hw:0
 SUDO=""
 AMIXER=/usr/bin/amixer
 
