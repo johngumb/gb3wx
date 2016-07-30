@@ -1,0 +1,15 @@
+285,287c285,294
+<     ma_max_i1 = pow(10, (I1LIMIT + 1) / 16.0);
+<     ma_max_i2 = pow(10, (I2LIMIT + 1) / 16.0);
+<     ma_max_m = pow(10, (MLIMIT) / 10.0);
+---
+>   //#define I1LIMIT 8       /* as in if(i>8)  */
+>   //#define I2LIMIT 23      /* as in if(i>24) -> changed 23 */
+>   //#define MLIMIT  15      /* as in if(m<15) */
+> 
+>   //    ma_max_i1 = pow(10, (I1LIMIT + 1) / 16.0);
+>   //  ma_max_i2 = pow(10, (I2LIMIT + 1) / 16.0);
+>   //  ma_max_m = pow(10, (MLIMIT) / 10.0);
+>   ma_max_i1 = 3.651741273;
+>   ma_max_i2 = 31.622776602;
+>   ma_max_m = 31.622776602;
