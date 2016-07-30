@@ -319,7 +319,7 @@ def wait_for_beacon_stop(ser, loop, maxwait):
     log(g_logger.info, "wait for beacon stop loop %d" % loop)
 
     for i in range((maxwait+5)*5):
-        (dsr, cts, dcd) = get_qso_signals(ser,"wait for beacon stop")
+        (dsr, cts, dcd) = get_qso_signals(ser)
         time.sleep(0.2)
         if not dcd:
             break
