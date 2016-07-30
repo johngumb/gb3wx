@@ -464,6 +464,10 @@ def main():
     # maximum seconds allowed for a beacon
     MAX_BEACON_TIME = 30
 
+    log_dir=os.path.join(os.path.expanduser("~"),"log")
+    if not os.path.exists(log_dir):
+        os.mkdir(log_dir)
+
     g_logger = get_logger()
 
     ofcom_logger = get_ofcom_logger()

@@ -19,4 +19,4 @@ ${SUDO} ${AMIXER} -D${DEV} sset Mic capture volume 1
 ${SUDO} ${AMIXER} -D${DEV} sset 'Mic Boost' off
 
 # playback for testing purposes
-${SUDO} ${AMIXER} sset Master Playback Volume 150
+${SUDO} ${AMIXER} -D${DEV} sset Master Playback Volume 150

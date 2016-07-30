@@ -1,3 +1,13 @@
-rpi-update
-yum -y install pyserial alsa-utils gcc-c++
+rpi-update with fwthing.tgz Hexxeh-rpi-firmware-4e2845e
+cp gb3wx/rc.local /etc/rc.d
+yum -y install ntp git pyserial alsa-utils gcc-c++ emacs alsa-lib-devel
+yum -y install alsa-plugins-speex # for dtmfgen
+
+cp /usr/share/zoneinfo/UTC /etc/localtime
+cp gb3wx/dotasoundrc ~/.asoundrc
+
+Defaults    !requiretty in visudo
+compiling lame - used lame-3.99.5
+see patches/lame.patch
+configure with CFLAGS=-O0
 
