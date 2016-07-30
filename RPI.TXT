@@ -1,6 +1,6 @@
 rpi-update with fwthing.tgz Hexxeh-rpi-firmware-4e2845e
 cp gb3wx/rc.local /etc/rc.d
-yum -y install ntp git pyserial alsa-utils gcc-c++ emacs alsa-lib-devel
+yum -y install ntp git pyserial alsa-utils gcc-c++ emacs alsa-lib-devel net-tools
 yum -y install alsa-plugins-speex # for dtmfgen
 
 cp /usr/share/zoneinfo/UTC /etc/localtime
