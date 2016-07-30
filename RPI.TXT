@@ -1,4 +1,10 @@
 rpi-update
-cp gb3wx/rc.local /etc
+cp gb3wx/rc.local /etc/rc.d
 yum -y install ntp git pyserial alsa-utils gcc-c++ emacs alsa-lib-devel
+yum -y install alsa-plugins-speex # for dtmfgen
+yum -y install lame
 
+cp /usr/share/zoneinfo/UTC /etc/localtime
+cp gb3wx/dotasoundrc ~/.asoundrc
+
+Defaults    !requiretty in visudo
