@@ -18,6 +18,7 @@ if [ -d ${recdir} ]; then
                 rm -f ${fname}
             fi
         fi
+        sync
     done
 fi
 
